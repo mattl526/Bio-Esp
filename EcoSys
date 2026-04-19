@@ -1,0 +1,3079 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ecosistemas de México — Aula Viva Interactiva</title>
+<style>
+  /* ==========================================================
+     DESIGN TOKENS & GLOBAL
+     ========================================================== */
+  :root {
+    --c-bg: #07091a;
+    --c-bg-2: #0e1430;
+    --c-panel: rgba(255, 255, 255, 0.05);
+    --c-panel-strong: rgba(255, 255, 255, 0.10);
+    --c-border: rgba(255, 255, 255, 0.14);
+    --c-text: #eef3ff;
+    --c-muted: #aab4cf;
+    --c-accent: #34d399;
+    --c-accent-2: #60a5fa;
+    --c-warn: #fbbf24;
+    --c-bad: #f87171;
+    --c-good: #4ade80;
+    --c-magenta: #e879f9;
+    --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.45);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+    --radius: 18px;
+    --radius-sm: 10px;
+    --font: "Segoe UI", system-ui, -apple-system, "Inter", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    color: var(--c-text);
+    background:
+      radial-gradient(1200px 700px at 10% -10%, #1b2a56 0%, transparent 60%),
+      radial-gradient(900px 600px at 110% 10%, #163a2e 0%, transparent 60%),
+      linear-gradient(180deg, var(--c-bg) 0%, var(--c-bg-2) 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ==========================================================
+     HERO
+     ========================================================== */
+  header.hero {
+    position: relative;
+    padding: 44px 28px 24px;
+    text-align: center;
+    overflow: hidden;
+  }
+  header.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(52,211,153,0.15), transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(96,165,250,0.12), transparent 40%);
+    z-index: 0;
+    pointer-events: none;
+  }
+  header.hero > * { position: relative; z-index: 1; }
+  header.hero h1 {
+    font-size: clamp(30px, 5vw, 54px);
+    margin: 0;
+    letter-spacing: 0.5px;
+    background: linear-gradient(90deg, #a7f3d0, #93c5fd, #fcd34d, #fbcfe8);
+    background-size: 300% 100%;
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+    animation: hueShift 8s ease-in-out infinite;
+  }
+  @keyframes hueShift {
+    0%, 100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+  }
+  header.hero p.lead {
+    color: var(--c-muted);
+    max-width: 820px;
+    margin: 12px auto 0;
+    font-size: 16px; line-height: 1.55;
+  }
+  .objectives {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    max-width: 1000px;
+    margin: 24px auto 0;
+  }
+  .objective {
+    background: var(--c-panel);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: left;
+    backdrop-filter: blur(8px);
+    transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+  }
+  .objective:hover {
+    transform: translateY(-3px);
+    border-color: var(--c-accent);
+    box-shadow: var(--shadow-md);
+  }
+  .objective .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--c-accent), var(--c-accent-2));
+    color: #07101f; font-weight: 800; font-size: 14px;
+    margin-right: 8px;
+  }
+  .objective h3 { margin: 0 0 6px; font-size: 15px; }
+  .objective p { margin: 0; color: var(--c-muted); font-size: 14px; line-height: 1.5; }
+
+  /* Stat strip */
+  .stat-strip {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    justify-content: center;
+    margin: 22px auto 0;
+    max-width: 900px;
+  }
+  .stat-pill {
+    background: var(--c-panel);
+    border: 1px solid var(--c-border);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: var(--c-muted);
+  }
+  .stat-pill b { color: var(--c-text); }
+
+  /* ==========================================================
+     CONTAINER + SECTION HEADERS
+     ========================================================== */
+  .container { max-width: 1240px; margin: 0 auto; padding: 0 20px 80px; }
+  h2.section {
+    font-size: 22px;
+    margin: 34px 0 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  h2.section::before {
+    content: "";
+    display: inline-block;
+    width: 8px; height: 22px; border-radius: 3px;
+    background: linear-gradient(180deg, var(--c-accent), var(--c-accent-2));
+  }
+
+  /* ==========================================================
+     ECOSYSTEM SELECTOR
+     ========================================================== */
+  .eco-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+  }
+  .eco-card {
+    position: relative;
+    cursor: pointer;
+    border-radius: var(--radius);
+    padding: 16px;
+    min-height: 140px;
+    border: 1px solid var(--c-border);
+    background: var(--c-panel);
+    color: var(--c-text);
+    overflow: hidden;
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  .eco-card::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: var(--card-bg, linear-gradient(135deg,#1f2a48,#2a3a66));
+    opacity: 0.85;
+    z-index: 0;
+    transition: opacity .3s ease, transform .5s ease;
+  }
+  .eco-card::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.45) 100%);
+    z-index: 1;
+  }
+  .eco-card:hover::before { transform: scale(1.08); }
+  .eco-card:hover { transform: translateY(-5px); border-color: var(--c-accent); box-shadow: var(--shadow-lg); }
+  .eco-card.active {
+    border-color: var(--c-accent);
+    box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.5), var(--shadow-lg);
+  }
+  .eco-card > * { position: relative; z-index: 2; }
+  .eco-card .title { font-weight: 800; font-size: 18px; margin-bottom: 4px; }
+  .eco-card .sub { font-size: 13px; color: rgba(255,255,255,0.85); }
+  .eco-card .meta {
+    position: absolute;
+    bottom: 14px; left: 16px; right: 16px;
+    display: flex; justify-content: space-between;
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    z-index: 2;
+  }
+  .eco-card .icon {
+    font-size: 36px;
+    position: absolute;
+    top: 12px; right: 14px;
+    z-index: 2;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+    animation: floatY 4s ease-in-out infinite;
+  }
+  @keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+
+  /* ==========================================================
+     INTERACTIVE SCENE
+     ========================================================== */
+  .scene-wrap {
+    display: grid;
+    grid-template-columns: 1.55fr 1fr;
+    gap: 18px;
+    margin-top: 18px;
+  }
+  @media (max-width: 960px) { .scene-wrap { grid-template-columns: 1fr; } }
+
+  .scene {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--c-border);
+    aspect-ratio: 16/10;
+    background: #000;
+    box-shadow: var(--shadow-lg);
+    cursor: crosshair;
+  }
+  .scene canvas {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    display: block;
+  }
+  .scene .overlay {
+    position: absolute;
+    left: 14px; top: 14px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(8px);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    border: 1px solid var(--c-border);
+    z-index: 5;
+    max-width: 60%;
+  }
+  .scene .controls {
+    position: absolute;
+    right: 12px; top: 12px;
+    display: flex; flex-direction: column; gap: 6px;
+    z-index: 6;
+  }
+  .scene .sc-btn {
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--c-border);
+    color: #fff;
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s ease;
+  }
+  .scene .sc-btn:hover { background: rgba(52,211,153,0.25); border-color: var(--c-accent); transform: scale(1.05); }
+  .scene .sc-btn.active { background: var(--c-accent); color: #06121f; }
+
+  .scene .hotspot {
+    position: absolute;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #fff, var(--hot-color, var(--c-accent)));
+    border: 2px solid rgba(255,255,255,0.9);
+    box-shadow: 0 0 0 6px rgba(255,255,255,0.10),
+                0 0 20px 4px var(--hot-color, var(--c-accent));
+    cursor: pointer;
+    transform: translate(-50%,-50%);
+    animation: pulse 2s infinite ease-in-out;
+    z-index: 4;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .scene .hotspot::after {
+    content: attr(data-label);
+    position: absolute;
+    left: 50%; top: 120%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 12px;
+    background: rgba(0,0,0,0.75);
+    padding: 4px 8px;
+    border-radius: 6px;
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s ease;
+  }
+  .scene .hotspot:hover::after { opacity: 1; }
+  @keyframes pulse {
+    0%, 100% { transform: translate(-50%,-50%) scale(1); }
+    50%      { transform: translate(-50%,-50%) scale(1.18); }
+  }
+
+  /* Weather + Day/Night bar */
+  .scene .weather-bar {
+    position: absolute;
+    left: 50%; bottom: 12px;
+    transform: translateX(-50%);
+    display: flex; gap: 6px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(8px);
+    padding: 6px;
+    border-radius: 999px;
+    border: 1px solid var(--c-border);
+    z-index: 6;
+  }
+  .scene .weather-bar button {
+    background: transparent;
+    border: none;
+    color: #fff;
+    width: 34px; height: 34px; border-radius: 999px;
+    cursor: pointer; font-size: 15px;
+    transition: all .2s ease;
+  }
+  .scene .weather-bar button:hover { background: rgba(255,255,255,0.14); }
+  .scene .weather-bar button.active {
+    background: linear-gradient(135deg, var(--c-accent), var(--c-accent-2));
+    color: #06121f;
+  }
+
+  /* Species popup card */
+  .species-card {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%) scale(0.85);
+    max-width: 360px; width: 80%;
+    background: rgba(15, 20, 40, 0.92);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow-lg);
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease;
+    z-index: 10;
+  }
+  .species-card.show {
+    opacity: 1; pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .species-card .close {
+    position: absolute; top: 8px; right: 10px;
+    background: transparent; border: none; color: var(--c-muted);
+    font-size: 18px; cursor: pointer;
+  }
+  .species-card .close:hover { color: var(--c-text); }
+  .species-card .sp-title {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 6px;
+  }
+  .species-card .sp-title .em { font-size: 28px; }
+  .species-card .sp-title .name { font-size: 18px; font-weight: 800; }
+  .species-card .sci {
+    color: var(--c-muted); font-style: italic; font-size: 13px;
+    margin-bottom: 10px;
+  }
+  .species-card .kind-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 700; margin-bottom: 10px;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .species-card .kind-badge.biotic { background: rgba(16,185,129,0.25); color: #a7f3d0; }
+  .species-card .kind-badge.abiotic { background: rgba(96,165,250,0.25); color: #bfdbfe; }
+  .species-card .fact {
+    font-size: 14px; line-height: 1.5; color: var(--c-text); margin: 6px 0 10px;
+  }
+  .species-card .status {
+    font-size: 12px; color: var(--c-muted);
+  }
+  .species-card .status .dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    margin-right: 6px; vertical-align: middle;
+  }
+
+  /* ==========================================================
+     INFO PANEL
+     ========================================================== */
+  .info-panel {
+    background: var(--c-panel);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius);
+    padding: 18px;
+    backdrop-filter: blur(10px);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .info-panel h3 { margin: 0; font-size: 22px; }
+  .info-panel .desc { color: var(--c-muted); font-size: 14px; line-height: 1.55; margin: 0; }
+  .info-panel .where { font-size: 12px; color: var(--c-muted); }
+
+  .factor-tabs { display: flex; gap: 8px; }
+  .factor-tabs button {
+    flex: 1;
+    padding: 10px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--c-border);
+    background: transparent;
+    color: var(--c-text);
+    cursor: pointer;
+    font-weight: 700;
+    transition: all .25s ease;
+    font-size: 13px;
+  }
+  .factor-tabs button:hover { background: rgba(255,255,255,0.06); }
+  .factor-tabs button.active[data-kind="biotic"] {
+    background: linear-gradient(135deg, #059669, #10b981);
+    border-color: transparent;
+  }
+  .factor-tabs button.active[data-kind="abiotic"] {
+    background: linear-gradient(135deg, #2563eb, #60a5fa);
+    border-color: transparent;
+  }
+
+  .factor-list {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    min-height: 40px;
+  }
+  .chip {
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    border: 1px solid var(--c-border);
+    background: rgba(255,255,255,0.05);
+    cursor: pointer;
+    transition: transform .2s ease, background .2s ease;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .chip:hover { transform: translateY(-2px); background: rgba(255,255,255,0.12); }
+  .chip.biotic { border-color: rgba(16, 185, 129, 0.5); color: #a7f3d0; }
+  .chip.abiotic { border-color: rgba(96, 165, 250, 0.5); color: #bfdbfe; }
+
+  /* Impact slider */
+  .impact-section {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+  }
+  .impact-section h4 { margin: 0 0 4px; font-size: 15px; }
+  .impact-section p.hint { margin: 0 0 10px; font-size: 12px; color: var(--c-muted); }
+  .slider-row { display: flex; align-items: center; gap: 12px; }
+  .slider-row input[type="range"] {
+    flex: 1; -webkit-appearance: none; appearance: none;
+    height: 8px; border-radius: 999px;
+    background: linear-gradient(to right, var(--c-good), var(--c-warn), var(--c-bad));
+    outline: none;
+  }
+  .slider-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #fff; border: 3px solid var(--c-accent);
+    cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .slider-row input[type="range"]::-moz-range-thumb {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #fff; border: 3px solid var(--c-accent); cursor: pointer;
+  }
+  .impact-label { min-width: 90px; font-weight: 800; text-align: right; font-size: 14px; }
+  .impact-msg {
+    margin-top: 10px; padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 13px; line-height: 1.45;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--c-border);
+  }
+
+  /* Rescue game button */
+  .rescue-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #f97316, #facc15);
+    color: #1a0c00;
+    font-weight: 800; font-size: 14px;
+    cursor: pointer;
+    transition: transform .15s ease, filter .15s ease;
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.3);
+  }
+  .rescue-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+  /* ==========================================================
+     GAME (Drag & drop)
+     ========================================================== */
+  .game {
+    margin-top: 28px;
+    padding: 20px;
+    border-radius: var(--radius);
+    border: 1px solid var(--c-border);
+    background: linear-gradient(180deg, rgba(16,185,129,0.08), rgba(96,165,250,0.08));
+  }
+  .game-header {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .game-header h3 { margin: 0; font-size: 20px; }
+  .score-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+  .score-badge {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--c-border);
+    padding: 6px 12px; border-radius: 999px;
+    font-size: 13px; font-weight: 700;
+  }
+  .score-badge.correct { color: var(--c-good); border-color: rgba(74,222,128,0.4); }
+  .score-badge.wrong   { color: var(--c-bad);  border-color: rgba(248,113,113,0.4); }
+  .score-badge.streak  { color: var(--c-warn); border-color: rgba(251,191,36,0.5); }
+
+  .drag-area {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
+  }
+  @media (max-width: 800px) { .drag-area { grid-template-columns: 1fr; } }
+  .bucket {
+    min-height: 180px;
+    border: 2px dashed var(--c-border);
+    border-radius: var(--radius);
+    padding: 12px;
+    display: flex; flex-direction: column; gap: 8px;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .bucket.over { background: rgba(255,255,255,0.06); border-color: var(--c-accent); transform: scale(1.02); }
+  .bucket h4 {
+    margin: 0; font-size: 14px; letter-spacing: 0.5px;
+    text-transform: uppercase; color: var(--c-muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .bucket[data-kind="biotic"]  h4 { color: #a7f3d0; }
+  .bucket[data-kind="abiotic"] h4 { color: #bfdbfe; }
+  .bucket .tokens { display: flex; flex-wrap: wrap; gap: 6px; min-height: 40px; }
+  .token {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--c-border);
+    border-radius: 999px;
+    font-size: 14px; cursor: grab; user-select: none;
+    transition: transform .15s ease, background .15s ease;
+  }
+  .token:active { cursor: grabbing; }
+  .token:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
+  .token.placed.correct {
+    background: rgba(16,185,129,0.25); border-color: rgba(16,185,129,0.6);
+    animation: flashGreen .6s ease;
+  }
+  .token.placed.wrong {
+    background: rgba(248,113,113,0.25); border-color: rgba(248,113,113,0.6);
+    animation: shakeX .4s ease;
+  }
+  @keyframes flashGreen { 0%{box-shadow:0 0 0 0 rgba(16,185,129,0.8)} 100%{box-shadow:0 0 0 12px rgba(16,185,129,0)} }
+  @keyframes shakeX { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-4px)} 40%{transform:translateX(4px)} 60%{transform:translateX(-3px)} 80%{transform:translateX(3px)} }
+
+  .game-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .btn {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--c-border);
+    background: rgba(255,255,255,0.06);
+    color: var(--c-text);
+    cursor: pointer; font-weight: 600;
+    transition: all .2s ease;
+  }
+  .btn:hover { background: rgba(255,255,255,0.14); border-color: var(--c-accent); }
+  .btn.primary {
+    background: linear-gradient(135deg, var(--c-accent), var(--c-accent-2));
+    color: #06121f; border-color: transparent;
+  }
+  .btn.primary:hover { filter: brightness(1.08); }
+
+  /* ==========================================================
+     FOOD CHAIN VIS
+     ========================================================== */
+  .food-chain {
+    margin-top: 24px;
+    padding: 18px;
+    border-radius: var(--radius);
+    border: 1px solid var(--c-border);
+    background: rgba(0,0,0,0.25);
+  }
+  .food-chain h3 { margin: 0 0 10px; font-size: 18px; }
+  .chain-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; flex-wrap: wrap;
+  }
+  .chain-node {
+    flex: 1; min-width: 110px;
+    padding: 10px; text-align: center;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--c-border); border-radius: 12px;
+    transition: transform .2s ease;
+  }
+  .chain-node:hover { transform: translateY(-3px); }
+  .chain-node .em { font-size: 32px; display: block; margin-bottom: 4px; animation: floatY 3s ease-in-out infinite; }
+  .chain-node .lbl { font-size: 12px; font-weight: 700; }
+  .chain-node .role { font-size: 10px; color: var(--c-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .chain-arrow {
+    font-size: 22px; color: var(--c-accent); font-weight: 800;
+    animation: slideRight 1.5s ease-in-out infinite;
+  }
+  @keyframes slideRight { 0%,100%{transform:translateX(0)} 50%{transform:translateX(5px)} }
+
+  /* ==========================================================
+     QUIZ
+     ========================================================== */
+  .quiz {
+    margin-top: 28px;
+    padding: 20px;
+    border-radius: var(--radius);
+    border: 1px solid var(--c-border);
+    background: var(--c-panel);
+  }
+  .quiz h3 { margin: 0 0 10px; font-size: 20px; }
+  .question { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .question:last-child { border-bottom: none; }
+  .question p.q { margin: 0 0 8px; font-weight: 600; }
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @media (max-width: 600px) { .options { grid-template-columns: 1fr; } }
+  .option {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--c-border);
+    background: rgba(255,255,255,0.04);
+    cursor: pointer; transition: all .2s ease;
+    font-size: 14px;
+  }
+  .option:hover { background: rgba(255,255,255,0.12); }
+  .option.correct { background: rgba(74,222,128,0.2); border-color: rgba(74,222,128,0.6); }
+  .option.wrong { background: rgba(248,113,113,0.2); border-color: rgba(248,113,113,0.6); }
+  .quiz-result {
+    margin-top: 12px; padding: 14px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(52,211,153,0.15), rgba(96,165,250,0.15));
+    font-weight: 700;
+  }
+
+  /* ==========================================================
+     ACHIEVEMENTS
+     ========================================================== */
+  .achievements-bar {
+    position: fixed;
+    right: 20px; bottom: 20px;
+    display: flex; flex-direction: column; gap: 8px;
+    z-index: 100;
+    pointer-events: none;
+  }
+  .toast {
+    background: rgba(15, 20, 40, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--c-accent);
+    border-left: 4px solid var(--c-accent);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: #fff;
+    max-width: 320px;
+    box-shadow: var(--shadow-lg);
+    animation: slideInRight .3s ease, slideOutRight .3s ease 3.7s forwards;
+    pointer-events: auto;
+  }
+  .toast .title { font-weight: 800; margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
+  .toast .desc { font-size: 13px; color: var(--c-muted); }
+  @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes slideOutRight { to { transform: translateX(120%); opacity: 0; } }
+
+  .badges-wall {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-top: 10px;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--c-border);
+    font-size: 12px;
+    color: var(--c-muted);
+    opacity: 0.4;
+    transition: all .3s ease;
+  }
+  .badge.earned {
+    background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(249,115,22,0.2));
+    border-color: rgba(251,191,36,0.6);
+    color: #fde68a;
+    opacity: 1;
+  }
+
+  /* ==========================================================
+     FOOTER
+     ========================================================== */
+  footer {
+    text-align: center;
+    color: var(--c-muted);
+    font-size: 13px;
+    padding: 26px 10px 40px;
+    border-top: 1px solid var(--c-border);
+    margin-top: 40px;
+  }
+
+  /* Reveal-on-scroll */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 9999; }
+</style>
+</head>
+<body>
+
+<!-- =============================== HERO =============================== -->
+<header class="hero">
+  <h1>Ecosistemas de México</h1>
+  <p class="lead">
+    Un viaje interactivo y vivo por los ecosistemas más asombrosos de nuestro país.
+    Explora, haz click en cada criatura, cambia el clima, salva la naturaleza y conviértete en guardián de la biodiversidad.
+  </p>
+  <div class="objectives">
+    <div class="objective">
+      <h3><span class="num">1</span>Identificar factores</h3>
+      <p>Aprender a identificar los factores <b>bióticos</b> y <b>abióticos</b> de los diferentes ecosistemas en México.</p>
+    </div>
+    <div class="objective">
+      <h3><span class="num">2</span>Nuestro papel</h3>
+      <p>Analizar el papel tan importante que como seres humanos tenemos para el <b>cuidado</b> de los ecosistemas y su <b>preservación</b>.</p>
+    </div>
+  </div>
+
+  <div class="stat-strip">
+    <span class="stat-pill">🌎 <b>12%</b> de la biodiversidad mundial</span>
+    <span class="stat-pill">🦎 <b>~70,000</b> especies conocidas</span>
+    <span class="stat-pill">🌵 <b>Top 5</b> país megadiverso</span>
+    <span class="stat-pill">🐆 <b>717</b> especies de mamíferos</span>
+    <span class="stat-pill">🦋 <b>1,800+</b> especies de aves</span>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- =============================== SELECTOR =============================== -->
+  <h2 class="section reveal">🌍 Elige un ecosistema</h2>
+  <div id="ecoGrid" class="eco-grid reveal"></div>
+
+  <!-- =============================== INTERACTIVE SCENE =============================== -->
+  <h2 class="section reveal">🎬 Explora la escena viva</h2>
+  <div class="scene-wrap reveal">
+    <div class="scene" id="scene">
+      <canvas id="sceneCanvas"></canvas>
+
+      <div class="overlay" id="sceneOverlay">Selecciona un ecosistema</div>
+
+      <div class="controls">
+        <button class="sc-btn" id="btnDayNight" title="Cambiar día/noche">☀️</button>
+        <button class="sc-btn" id="btnSound" title="Sonido" >🔊</button>
+        <button class="sc-btn" id="btnFullscreen" title="Pantalla completa">⛶</button>
+      </div>
+
+      <div class="weather-bar">
+        <button class="active" data-weather="clear" title="Despejado">☀️</button>
+        <button data-weather="rain" title="Lluvia">🌧️</button>
+        <button data-weather="storm" title="Tormenta">⛈️</button>
+        <button data-weather="wind" title="Viento">💨</button>
+      </div>
+
+      <!-- Species popup -->
+      <div class="species-card" id="speciesCard">
+        <button class="close" id="speciesClose">✕</button>
+        <div class="sp-title">
+          <span class="em" id="spEm">🌿</span>
+          <span class="name" id="spName">—</span>
+        </div>
+        <div class="sci" id="spSci">—</div>
+        <span class="kind-badge biotic" id="spKind">Biótico</span>
+        <p class="fact" id="spFact">—</p>
+        <div class="status">
+          <span class="dot" id="spDot"></span>
+          <span id="spStatus">—</span>
+        </div>
+      </div>
+    </div>
+
+    <aside class="info-panel">
+      <div>
+        <h3 id="ecoTitle">—</h3>
+        <div class="where" id="ecoWhere">—</div>
+      </div>
+      <p class="desc" id="ecoDesc">Elige un ecosistema para comenzar a explorar.</p>
+
+      <div class="factor-tabs" role="tablist">
+        <button class="active" data-kind="biotic">🌱 Bióticos</button>
+        <button data-kind="abiotic">💧 Abióticos</button>
+      </div>
+
+      <div class="factor-list" id="factorList"></div>
+
+      <div class="impact-section">
+        <h4>💥 Impacto humano</h4>
+        <p class="hint">Desliza para ver cómo nuestras acciones transforman el ecosistema.</p>
+        <div class="slider-row">
+          <input type="range" id="impactSlider" min="0" max="100" value="20" />
+          <div class="impact-label" id="impactLabel">Sano</div>
+        </div>
+        <div class="impact-msg" id="impactMsg">
+          Un ecosistema saludable mantiene el equilibrio entre todos sus componentes.
+        </div>
+      </div>
+
+      <button class="rescue-btn" id="btnRescue">
+        🌱 Modo rescate: ¡salva el ecosistema!
+      </button>
+    </aside>
+  </div>
+
+  <!-- =============================== FOOD CHAIN =============================== -->
+  <section class="food-chain reveal">
+    <h3>🔗 Cadena alimenticia</h3>
+    <div class="chain-row" id="chainRow"></div>
+  </section>
+
+  <!-- =============================== CLASSIFICATION GAME =============================== -->
+  <section class="game reveal" id="game">
+    <div class="game-header">
+      <h3>🎯 Clasifica: ¿biótico o abiótico?</h3>
+      <div class="score-badges">
+        <span class="score-badge correct" id="scoreCorrect">Correctas: 0</span>
+        <span class="score-badge wrong" id="scoreWrong">Errores: 0</span>
+        <span class="score-badge streak" id="scoreStreak">Racha: 0</span>
+      </div>
+    </div>
+    <div class="drag-area">
+      <div class="bucket" data-kind="pool">
+        <h4>🎒 Elementos</h4>
+        <div class="tokens" id="poolTokens"></div>
+      </div>
+      <div class="bucket" data-kind="biotic">
+        <h4>🌿 Bióticos (vivos)</h4>
+        <div class="tokens" id="bioticTokens"></div>
+      </div>
+      <div class="bucket" data-kind="abiotic">
+        <h4>💧 Abióticos (no vivos)</h4>
+        <div class="tokens" id="abioticTokens"></div>
+      </div>
+    </div>
+    <div class="game-actions">
+      <button class="btn primary" id="btnCheck">✅ Revisar respuestas</button>
+      <button class="btn" id="btnReset">🔄 Reiniciar</button>
+      <button class="btn" id="btnNewSet">➡️ Otro ecosistema</button>
+    </div>
+  </section>
+
+  <!-- =============================== QUIZ =============================== -->
+  <section class="quiz reveal">
+    <h3>🧠 Cuestionario: ¿cómo cuidamos los ecosistemas?</h3>
+    <div id="quizContainer"></div>
+    <div class="quiz-result" id="quizResult" style="display:none"></div>
+  </section>
+
+  <!-- =============================== BADGES =============================== -->
+  <section class="reveal" style="margin-top: 28px;">
+    <h2 class="section" style="margin-top:0">🏆 Logros desbloqueados</h2>
+    <div class="badges-wall" id="badgesWall"></div>
+  </section>
+
+</main>
+
+<footer>
+  Hecho con ♥ para maestros de biología · Ecosistemas de México · Clase interactiva
+</footer>
+
+<div class="achievements-bar" id="toastContainer"></div>
+<canvas id="confetti"></canvas>
+
+<script>
+/* ==================================================================
+   ECOSYSTEM DATA — rich species info with scientific names, facts, status
+   ================================================================== */
+const STATUS = {
+  safe:   { color: "#4ade80", label: "Preocupación menor" },
+  vulner: { color: "#fbbf24", label: "Vulnerable" },
+  endang: { color: "#fb923c", label: "En peligro" },
+  critic: { color: "#f87171", label: "En peligro crítico" },
+  abio:   { color: "#60a5fa", label: "Factor abiótico" }
+};
+
+const ECOSYSTEMS = [
+  /* ======================================================= SELVA */
+  {
+    id: "selva",
+    name: "Selva Lacandona",
+    where: "Chiapas · Bosque tropical húmedo",
+    subtitle: "Selva tropical",
+    icon: "🌴",
+    metaA: "~1.8 millones ha",
+    metaB: "+3,400 plantas",
+    cardBg: "linear-gradient(135deg,#064e3b,#065f46 50%,#047857)",
+    palette: { sky: ["#053b3a","#0e5e55","#1b8379"] },
+    description: "La última gran selva tropical de México. Un dosel cerrado donde llueven hasta 3,000 mm al año y donde se esconde el 20% de la biodiversidad del país.",
+    biotic: [
+      { em:"🐆", name:"Jaguar",           sci:"Panthera onca",        status:"endang", fact:"El felino más grande de América. Puede saltar 3m de altura y su mordida rompe caparazones de tortuga." },
+      { em:"🦜", name:"Guacamaya roja",   sci:"Ara macao",            status:"endang", fact:"Puede vivir 75 años. Forma pareja de por vida y se comunica con gritos que viajan kilómetros." },
+      { em:"🐒", name:"Mono araña",       sci:"Ateles geoffroyi",     status:"endang", fact:"Su cola es tan fuerte que funciona como una quinta mano. Salta entre árboles a 35 metros de altura." },
+      { em:"🌳", name:"Ceiba",            sci:"Ceiba pentandra",      status:"safe",   fact:"Árbol sagrado maya. Crece hasta 70m y sus raíces forman muros naturales llamados 'contrafuertes'." },
+      { em:"🌸", name:"Orquídea monja",   sci:"Lycaste skinneri",     status:"vulner", fact:"Flor nacional de Guatemala, también vive en Chiapas. Vive sobre los árboles sin parasitarlos." },
+      { em:"🐸", name:"Rana de ojos rojos", sci:"Agalychnis callidryas", status:"safe", fact:"Cuando duerme esconde sus ojos rojos. Al despertar los muestra para asustar a depredadores." },
+      { em:"🦎", name:"Basilisco verde",   sci:"Basiliscus plumifrons", status:"safe",  fact:"Corre sobre el agua gracias a sus patas palmeadas. Lo llaman el 'lagarto Jesucristo'." },
+      { em:"🐍", name:"Nauyaca real",     sci:"Bothrops asper",       status:"safe",   fact:"Serpiente venenosa que detecta el calor con hoyos bajo sus ojos, hasta en total oscuridad." }
+    ],
+    abiotic: [
+      { em:"🌧️", name:"Lluvia abundante", fact:"Hasta 3,000 mm anuales. El agua talla ríos y mantiene viva la selva." },
+      { em:"💨", name:"Humedad alta",     fact:"Arriba del 80%. Permite que musgos y orquídeas vivan en los árboles." },
+      { em:"🌱", name:"Suelo rico",       fact:"Aunque delgado, está lleno de materia orgánica reciclada constantemente." },
+      { em:"🌡️", name:"Temperatura cálida", fact:"Entre 22 y 28 °C todo el año. Permite reproducción continua." },
+      { em:"🏞️", name:"Ríos (Usumacinta)", fact:"El río más caudaloso de México. Conecta la selva con el mar." },
+      { em:"🌤️", name:"Luz filtrada",     fact:"Solo el 2% de la luz llega al suelo del dosel cerrado." }
+    ],
+    hotspotsByType: ["biotic","biotic","biotic","abiotic","abiotic"],
+    impactMessages: [
+      "🌳 Dosel cerrado, lluvia constante y fauna activa — la selva prospera.",
+      "⚠️ Tala selectiva: algunos árboles caen, la luz entra y ciertos animales huyen.",
+      "🔥 Deforestación severa: el suelo se erosiona, los jaguares pierden su hogar.",
+      "💀 Pérdida crítica: cuando la selva cae, también lo hacen miles de especies."
+    ],
+    foodChain: [
+      { em:"☀️", lbl:"Sol",        role:"Energía" },
+      { em:"🌳", lbl:"Ceiba",      role:"Productor" },
+      { em:"🐒", lbl:"Mono araña", role:"Consumidor 1°" },
+      { em:"🐆", lbl:"Jaguar",     role:"Consumidor 2°" },
+      { em:"🍄", lbl:"Hongos",     role:"Descomponedor" }
+    ]
+  },
+
+  /* ======================================================= DESIERTO */
+  {
+    id: "desierto",
+    name: "Desierto de Sonora",
+    where: "Sonora y Baja California · Desierto cálido",
+    subtitle: "Desierto",
+    icon: "🌵",
+    metaA: "~260,000 km²",
+    metaB: "~560 especies de aves",
+    cardBg: "linear-gradient(135deg,#78350f,#b45309 50%,#f59e0b)",
+    palette: { sky: ["#7c2d12","#b45309","#fbbf24"] },
+    description: "El desierto más biodiverso del mundo. Aquí el saguaro llega a vivir 200 años y los animales salen de noche para escapar del sol abrasador.",
+    biotic: [
+      { em:"🌵", name:"Saguaro",            sci:"Carnegiea gigantea",    status:"safe",   fact:"Crece apenas 1cm al año. Puede medir 15m y guardar hasta 750 litros de agua en su tallo." },
+      { em:"🐺", name:"Coyote",             sci:"Canis latrans",         status:"safe",   fact:"Omnívoro súper inteligente. Caza en pareja, se comunica con aullidos y vive hasta en ciudades." },
+      { em:"🦎", name:"Monstruo de Gila",   sci:"Heloderma suspectum",   status:"vulner", fact:"Uno de los dos únicos lagartos venenosos del mundo. Guarda grasa en su cola." },
+      { em:"🐍", name:"Víbora de cascabel", sci:"Crotalus atrox",        status:"safe",   fact:"Su cascabel se forma con cada muda. Detecta calor y ataca en una milésima de segundo." },
+      { em:"🦅", name:"Águila real",        sci:"Aquila chrysaetos",     status:"endang", fact:"Símbolo nacional de México. Vuela a 320 km/h en picada y ve a un conejo desde 3 km." },
+      { em:"🐇", name:"Liebre de cola negra", sci:"Lepus californicus",  status:"safe",   fact:"Sus enormes orejas disipan el calor. Corre a 60 km/h zigzagueando para escapar." },
+      { em:"🐎", name:"Correcaminos",       sci:"Geococcyx californianus", status:"safe", fact:"Corre a 30 km/h y mata víboras de cascabel golpeándolas contra piedras." },
+      { em:"🌺", name:"Ocotillo",           sci:"Fouquieria splendens",  status:"safe",   fact:"Parece muerto casi todo el año pero florece en rojo tras cualquier lluvia." }
+    ],
+    abiotic: [
+      { em:"🏜️", name:"Arena",            fact:"Cubre todo. Se enfría rápido de noche y se calienta a 70°C de día." },
+      { em:"🪨", name:"Rocas",            fact:"Refugio crucial. Bajo ellas viven insectos, reptiles y roedores." },
+      { em:"☀️", name:"Sol intenso",     fact:"Más de 300 días soleados al año." },
+      { em:"💧", name:"Poca lluvia",     fact:"Menos de 250 mm al año. Cada tormenta es un evento de vida o muerte." },
+      { em:"🌡️", name:"Temperaturas extremas", fact:"De -5 °C en la noche a 50 °C en el día, en el mismo lugar." },
+      { em:"💨", name:"Viento seco",     fact:"Dispersa semillas de cactus a cientos de metros." }
+    ],
+    hotspotsByType: ["biotic","biotic","biotic","abiotic","abiotic"],
+    impactMessages: [
+      "🌵 Un desierto en equilibrio: fauna activa al amanecer y al atardecer.",
+      "⚠️ Caminos y ranchos rompen corredores: la liebre corre menos segura.",
+      "🚜 Agricultura intensiva agota mantos acuíferos: el saguaro se estresa.",
+      "🏙️ Urbanización descontrolada: el desierto pierde su biodiversidad única."
+    ],
+    foodChain: [
+      { em:"☀️", lbl:"Sol",        role:"Energía" },
+      { em:"🌵", lbl:"Saguaro",    role:"Productor" },
+      { em:"🐇", lbl:"Liebre",     role:"Consumidor 1°" },
+      { em:"🐺", lbl:"Coyote",     role:"Consumidor 2°" },
+      { em:"🦅", lbl:"Águila",     role:"Consumidor 3°" }
+    ]
+  },
+
+  /* ======================================================= ARRECIFE */
+  {
+    id: "arrecife",
+    name: "Arrecife Mesoamericano",
+    where: "Quintana Roo · Arrecife de coral",
+    subtitle: "Arrecife de coral",
+    icon: "🐠",
+    metaA: "~1,000 km de largo",
+    metaB: "2° arrecife del mundo",
+    cardBg: "linear-gradient(135deg,#0c4a6e,#0284c7 50%,#38bdf8)",
+    palette: { sky: ["#0c4a6e","#0e7490","#22d3ee"] },
+    description: "El segundo arrecife más grande del planeta. Una ciudad submarina donde cada coral es un animal vivo que tarda décadas en crecer.",
+    biotic: [
+      { em:"🪸", name:"Coral cuerno de alce",  sci:"Acropora palmata",       status:"critic", fact:"Construye arrecifes durante siglos. Perdió el 80% de su población por blanqueamiento." },
+      { em:"🐢", name:"Tortuga carey",         sci:"Eretmochelys imbricata", status:"critic", fact:"Come esponjas tóxicas sin problema. Su caparazón vale miles en el mercado negro." },
+      { em:"🦈", name:"Tiburón gata",          sci:"Ginglymostoma cirratum", status:"vulner", fact:"Duerme de día en cuevas. No es peligroso para humanos pero tiene una mordida súper poderosa." },
+      { em:"🐟", name:"Pez ángel reina",       sci:"Holacanthus ciliaris",   status:"safe",   fact:"Cambia de color al madurar. Los juveniles limpian parásitos de peces más grandes." },
+      { em:"🦑", name:"Pulpo común",           sci:"Octopus vulgaris",       status:"safe",   fact:"Tiene 3 corazones, sangre azul y 9 cerebros. Puede resolver puzles y abrir frascos." },
+      { em:"🪼", name:"Medusa luna",           sci:"Aurelia aurita",         status:"safe",   fact:"90% agua. No tiene cerebro, pero sabe cazar y reproducirse a la perfección." },
+      { em:"🐠", name:"Pez loro",              sci:"Scarus vetula",          status:"safe",   fact:"Come coral y expulsa arena blanca. Produce hasta 90 kg de arena al año." },
+      { em:"🌿", name:"Pasto marino",          sci:"Thalassia testudinum",   status:"vulner", fact:"Capta CO2 35 veces más rápido que un bosque tropical. Alimenta a manatíes y tortugas." }
+    ],
+    abiotic: [
+      { em:"🧂", name:"Agua salada",       fact:"Con 35 g de sal por litro. Permite que los corales formen su esqueleto calcáreo." },
+      { em:"☀️", name:"Luz solar",        fact:"Penetra hasta 40m. Las algas simbióticas del coral la necesitan para vivir." },
+      { em:"🌊", name:"Corrientes",       fact:"Traen nutrientes y larvas. Un coral puede viajar como larva y crecer a 100 km." },
+      { em:"🌡️", name:"Temperatura del mar", fact:"Ideal entre 23-29 °C. A más de 30 °C los corales blanquean." },
+      { em:"💨", name:"Oxígeno disuelto",  fact:"Producido por plantas marinas. Sin él, nadie respira bajo el agua." },
+      { em:"🪨", name:"Arrecife calizo",  fact:"Estructura de millones de esqueletos de coral apilados durante siglos." }
+    ],
+    hotspotsByType: ["biotic","biotic","biotic","abiotic","abiotic"],
+    impactMessages: [
+      "🐠 Aguas cristalinas: los corales florecen y los peces abundan.",
+      "⚠️ Turismo mal regulado: bloqueadores solares dañan los corales.",
+      "🌡️ Aumento de temperatura: los corales blanquean y mueren.",
+      "🗑️ Contaminación plástica: tortugas y peces desaparecen."
+    ],
+    foodChain: [
+      { em:"☀️", lbl:"Sol",           role:"Energía" },
+      { em:"🌿", lbl:"Pasto marino",  role:"Productor" },
+      { em:"🐢", lbl:"Tortuga",       role:"Consumidor 1°" },
+      { em:"🦈", lbl:"Tiburón",       role:"Consumidor 2°" },
+      { em:"🪸", lbl:"Coral",         role:"Ingeniero" }
+    ]
+  },
+
+  /* ======================================================= BOSQUE OYAMEL */
+  {
+    id: "bosque",
+    name: "Bosque de Oyamel",
+    where: "Michoacán y Edo. de México · Bosque templado",
+    subtitle: "Bosque templado frío",
+    icon: "🦋",
+    metaA: "~33,000 ha protegidas",
+    metaB: "+1 billón de monarcas",
+    cardBg: "linear-gradient(135deg,#14532d,#16a34a 50%,#86efac)",
+    palette: { sky: ["#1e3a8a","#3b82f6","#93c5fd"] },
+    description: "El santuario invernal más impresionante del mundo: cada año millones de mariposas monarca vuelan 4,500 km desde Canadá para dormir aquí.",
+    biotic: [
+      { em:"🦋", name:"Mariposa monarca",  sci:"Danaus plexippus",    status:"endang", fact:"Vuela hasta 4,500 km desde Canadá y EUA. 4 generaciones completan el viaje de ida y vuelta." },
+      { em:"🌲", name:"Oyamel",            sci:"Abies religiosa",     status:"endang", fact:"Solo crece arriba de 2,400m. Las monarcas se posan en sus ramas por millones." },
+      { em:"🦌", name:"Venado cola blanca", sci:"Odocoileus virginianus", status:"safe", fact:"Corre a 60 km/h y salta 3m. Los machos pierden sus astas cada año y vuelven a crecer." },
+      { em:"🐿️", name:"Ardilla gris",      sci:"Sciurus aureogaster", status:"safe",   fact:"Entierra miles de semillas cada otoño y se olvida de algunas — así planta árboles nuevos." },
+      { em:"🦉", name:"Búho manchado",     sci:"Strix occidentalis",  status:"vulner", fact:"Vuela silencioso con plumas aterciopeladas. Caza ratones en total oscuridad." },
+      { em:"🦃", name:"Guajolote silvestre", sci:"Meleagris gallopavo", status:"safe",  fact:"Antepasado del pavo doméstico. Los mexicas lo llamaban 'huehxolotl'." },
+      { em:"🌸", name:"Cedrón",            sci:"Lippia graveolens",   status:"safe",   fact:"Hierba aromática usada desde tiempos prehispánicos para tés y remedios." },
+      { em:"🐛", name:"Oruga monarca",     sci:"Danaus plexippus (larva)", status:"endang", fact:"Come solo algodoncillo venenoso — eso la hace tóxica para depredadores toda la vida." }
+    ],
+    abiotic: [
+      { em:"❄️", name:"Clima frío",       fact:"Entre -5 °C y 15 °C. Las monarcas se agrupan para mantener calor colectivo." },
+      { em:"🌫️", name:"Neblina",         fact:"Humedece las plantas. Ayuda a las monarcas a hibernar sin deshidratarse." },
+      { em:"🪨", name:"Suelo rocoso",     fact:"De origen volcánico. Rico en minerales pero delgado." },
+      { em:"⛰️", name:"Altitud elevada",  fact:"Entre 2,400 y 3,600m. El aire delgado filtra rayos UV." },
+      { em:"🌤️", name:"Luz filtrada",    fact:"El oyamel bloquea la luz directa — perfecto para monarcas que no toleran mucho sol." },
+      { em:"💧", name:"Humedad",          fact:"Clave para la hibernación. Menos del 30% y las monarcas mueren." }
+    ],
+    hotspotsByType: ["biotic","biotic","biotic","abiotic","abiotic"],
+    impactMessages: [
+      "🦋 Las monarcas llegan por millones: el bosque canta en naranja.",
+      "⚠️ Tala ilegal reduce el hogar de las monarcas cada invierno.",
+      "🌡️ Cambio climático altera el ciclo migratorio: menos monarcas llegan.",
+      "🪚 Bosque fragmentado: la monarca podría desaparecer de México."
+    ],
+    foodChain: [
+      { em:"☀️", lbl:"Sol",         role:"Energía" },
+      { em:"🌸", lbl:"Algodoncillo", role:"Productor" },
+      { em:"🐛", lbl:"Oruga",       role:"Consumidor 1°" },
+      { em:"🐦", lbl:"Ave",         role:"Consumidor 2°" },
+      { em:"🦉", lbl:"Búho",        role:"Depredador tope" }
+    ]
+  },
+
+  /* ======================================================= MANGLAR */
+  {
+    id: "manglar",
+    name: "Manglares de Marismas Nacionales",
+    where: "Nayarit-Sinaloa · Humedal costero",
+    subtitle: "Manglar tropical",
+    icon: "🌿",
+    metaA: "~133,854 ha",
+    metaB: "20% manglar nacional",
+    cardBg: "linear-gradient(135deg,#134e4a,#0f766e 50%,#5eead4)",
+    palette: { sky: ["#134e4a","#0f766e","#5eead4"] },
+    description: "Guarderías vivas del océano. Los manglares capturan 5 veces más carbono que la selva y son el primer escudo contra huracanes.",
+    biotic: [
+      { em:"🌳", name:"Mangle rojo",       sci:"Rhizophora mangle",    status:"vulner", fact:"Sus raíces parecen pilares. Filtra la sal y siembra sus propias semillas ya germinadas." },
+      { em:"🐊", name:"Cocodrilo de río",  sci:"Crocodylus acutus",    status:"vulner", fact:"Vive 70 años. Detecta vibraciones en el agua desde 100m de distancia." },
+      { em:"🦩", name:"Flamenco rosado",   sci:"Phoenicopterus ruber", status:"safe",   fact:"Su color rosa viene de los camarones que come. Duerme parado en una pata." },
+      { em:"🦀", name:"Cangrejo azul",     sci:"Callinectes sapidus",  status:"safe",   fact:"Puede caminar hacia los lados a gran velocidad. Cambia de caparazón más de 20 veces en su vida." },
+      { em:"🦐", name:"Camarón blanco",    sci:"Litopenaeus vannamei", status:"safe",   fact:"Nace en el mar abierto pero crece en los manglares — sin ellos, no hay camarón." },
+      { em:"🪿", name:"Garza blanca",      sci:"Ardea alba",           status:"safe",   fact:"Caza con paciencia infinita. Puede quedarse inmóvil media hora antes de atacar." },
+      { em:"🐟", name:"Sábalo",            sci:"Megalops atlanticus",  status:"vulner", fact:"Vive 80 años y puede saltar 3m fuera del agua. Respira aire con una vejiga natatoria modificada." },
+      { em:"🐍", name:"Boa constrictora",  sci:"Boa constrictor",      status:"safe",   fact:"Mata por asfixia. Puede pasar meses sin comer después de una comida grande." }
+    ],
+    abiotic: [
+      { em:"🧂", name:"Agua salobre",     fact:"Mezcla de agua dulce y salada. Solo algunos seres vivos la toleran." },
+      { em:"🟫", name:"Lodo",             fact:"Rico en nutrientes pero casi sin oxígeno. Las raíces de mangle respiran por encima." },
+      { em:"🌊", name:"Mareas",          fact:"Suben y bajan dos veces al día. Mueven nutrientes y limpian el sistema." },
+      { em:"🪨", name:"Sedimentos",      fact:"Capturan carbono por siglos. Los manglares son 'sumideros azules'." },
+      { em:"💧", name:"Sal",              fact:"El mangle la filtra o la excreta por hojas especiales." },
+      { em:"☀️", name:"Luz solar",       fact:"Nunca falta en el trópico — de ahí la alta productividad." }
+    ],
+    hotspotsByType: ["biotic","biotic","biotic","abiotic","abiotic"],
+    impactMessages: [
+      "🌿 Los manglares protegen la costa y refugian miles de especies.",
+      "⚠️ Construcción hotelera recorta los manglares: más erosión en la costa.",
+      "🏭 Acuacultura invasiva contamina el agua y mata peces juveniles.",
+      "🌪️ Sin manglares, los huracanes arrasan poblados enteros."
+    ],
+    foodChain: [
+      { em:"☀️", lbl:"Sol",         role:"Energía" },
+      { em:"🌳", lbl:"Mangle",      role:"Productor" },
+      { em:"🦐", lbl:"Camarón",     role:"Consumidor 1°" },
+      { em:"🦩", lbl:"Flamenco",    role:"Consumidor 2°" },
+      { em:"🐊", lbl:"Cocodrilo",   role:"Depredador tope" }
+    ]
+  }
+];
+
+/* ==================================================================
+   DOM helpers
+   ================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const el = (tag, cls, text) => {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+};
+const rand = (min, max) => Math.random() * (max - min) + min;
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+/* ==================================================================
+   STATE + ACHIEVEMENTS
+   ================================================================== */
+const state = {
+  currentEco: ECOSYSTEMS[0],
+  factorKind: "biotic",
+  impact: 20,
+  score: { correct: 0, wrong: 0, streak: 0, best: 0 },
+  isNight: false,
+  weather: "clear",
+  soundOn: false,
+  visitedEcos: new Set(),
+  species: new Set(),
+  rescueMode: false
+};
+
+const ACHIEVEMENTS = {
+  explorer:    { em:"🔍", title:"Explorador novato",    desc:"Visita tu primer ecosistema" },
+  naturalist:  { em:"🌿", title:"Naturalista",           desc:"Visita los 5 ecosistemas" },
+  biologist:   { em:"🔬", title:"Biólogo curioso",       desc:"Descubre 10 especies" },
+  master_biol: { em:"🦉", title:"Maestro biólogo",       desc:"Descubre 20 especies" },
+  classifier:  { em:"🎯", title:"Clasificador experto",  desc:"Clasifica 5 seguidas sin error" },
+  streak_10:   { em:"🔥", title:"En racha",              desc:"10 aciertos consecutivos" },
+  quiz_perfect:{ em:"🧠", title:"Sabelotodo",            desc:"Contesta el cuestionario perfecto" },
+  night_owl:   { em:"🌙", title:"Búho nocturno",         desc:"Cambia a modo noche" },
+  weather_god: { em:"⚡", title:"Dios del clima",        desc:"Prueba todos los climas" },
+  healer:      { em:"💚", title:"Sanador",               desc:"Completa el modo rescate" }
+};
+const unlockedAchievements = new Set();
+const weatherTried = new Set();
+
+function unlock(id) {
+  if (unlockedAchievements.has(id)) return;
+  unlockedAchievements.add(id);
+  const a = ACHIEVEMENTS[id];
+  showToast(`${a.em} ${a.title}`, a.desc);
+  renderBadges();
+  playTone([880, 1320], 0.15);
+}
+function renderBadges() {
+  const wall = $("#badgesWall");
+  wall.innerHTML = "";
+  Object.entries(ACHIEVEMENTS).forEach(([k, a]) => {
+    const b = el("span", "badge" + (unlockedAchievements.has(k) ? " earned" : ""));
+    b.innerHTML = `<span>${a.em}</span><span>${a.title}</span>`;
+    b.title = a.desc;
+    wall.appendChild(b);
+  });
+}
+function showToast(title, desc) {
+  const t = el("div", "toast");
+  t.innerHTML = `<div class="title">${title}</div><div class="desc">${desc || ""}</div>`;
+  $("#toastContainer").appendChild(t);
+  setTimeout(() => t.remove(), 4200);
+}
+
+/* ==================================================================
+   SOUND — tiny synthesized Web Audio beeps (no files needed)
+   ================================================================== */
+let audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function playTone(freqs, duration = 0.1, volume = 0.06) {
+  if (!state.soundOn) return;
+  try {
+    const ctx = ensureAudio();
+    const now = ctx.currentTime;
+    freqs.forEach((f, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = f;
+      gain.gain.setValueAtTime(0, now + i * 0.08);
+      gain.gain.linearRampToValueAtTime(volume, now + i * 0.08 + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + duration);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(now + i * 0.08); osc.stop(now + i * 0.08 + duration);
+    });
+  } catch (e) {}
+}
+function playClick()   { playTone([700], 0.08); }
+function playCorrect() { playTone([523, 659, 784], 0.12); }
+function playWrong()   { playTone([300, 200], 0.15); }
+
+/* ==================================================================
+   ECOSYSTEM CARD GRID
+   ================================================================== */
+const ecoGrid = $("#ecoGrid");
+ECOSYSTEMS.forEach(eco => {
+  const card = el("div", "eco-card");
+  card.style.setProperty("--card-bg", eco.cardBg);
+  card.dataset.id = eco.id;
+  card.innerHTML = `
+    <div class="icon">${eco.icon}</div>
+    <div class="title">${eco.name}</div>
+    <div class="sub">${eco.subtitle}</div>
+    <div class="meta"><span>${eco.metaA}</span><span>${eco.metaB}</span></div>
+  `;
+  card.addEventListener("click", () => {
+    playClick();
+    selectEcosystem(eco.id);
+  });
+  ecoGrid.appendChild(card);
+});
+
+/* ==================================================================
+   SELECT ECOSYSTEM
+   ================================================================== */
+function selectEcosystem(id) {
+  const eco = ECOSYSTEMS.find(e => e.id === id);
+  if (!eco) return;
+  state.currentEco = eco;
+  state.visitedEcos.add(id);
+  if (state.visitedEcos.size === 1) unlock("explorer");
+  if (state.visitedEcos.size === ECOSYSTEMS.length) unlock("naturalist");
+
+  $$(".eco-card").forEach(c => c.classList.toggle("active", c.dataset.id === id));
+  $("#ecoTitle").textContent = eco.name;
+  $("#ecoWhere").textContent = eco.where;
+  $("#ecoDesc").textContent = eco.description;
+  $("#sceneOverlay").textContent = `${eco.name} · Haz click en los puntos brillantes para descubrir especies`;
+
+  renderFactors();
+  renderHotspots();
+  renderFoodChain();
+  resetGameForEco(eco);
+  updateImpact(+$("#impactSlider").value);
+
+  Scene.load(eco);
+}
+
+/* Factor tabs */
+$$(".factor-tabs button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    state.factorKind = btn.dataset.kind;
+    $$(".factor-tabs button").forEach(b => b.classList.toggle("active", b === btn));
+    renderFactors();
+    playClick();
+  });
+});
+
+function renderFactors() {
+  const list = $("#factorList");
+  list.innerHTML = "";
+  const eco = state.currentEco;
+  const items = state.factorKind === "biotic" ? eco.biotic : eco.abiotic;
+  items.forEach(item => {
+    const chip = el("span", `chip ${state.factorKind}`);
+    chip.innerHTML = `<span>${item.em}</span><span>${item.name}</span>`;
+    chip.addEventListener("click", () => openSpeciesCard(item, state.factorKind));
+    list.appendChild(chip);
+  });
+}
+
+function renderHotspots() {
+  $$("#scene .hotspot").forEach(h => h.remove());
+  const scene = $("#scene");
+  const eco = state.currentEco;
+  const positions = [
+    { x: 22, y: 58 }, { x: 72, y: 32 }, { x: 40, y: 70 },
+    { x: 82, y: 55 }, { x: 55, y: 25 }
+  ];
+  eco.hotspotsByType.forEach((kind, i) => {
+    const pool = kind === "biotic" ? eco.biotic : eco.abiotic;
+    const item = pool[i % pool.length];
+    const pos = positions[i];
+    const dot = el("div", "hotspot");
+    dot.style.left = pos.x + "%";
+    dot.style.top = pos.y + "%";
+    dot.style.setProperty("--hot-color", kind === "biotic" ? "#34d399" : "#60a5fa");
+    dot.dataset.label = `${item.em} ${item.name}`;
+    dot.textContent = item.em;
+    dot.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openSpeciesCard(item, kind);
+      playClick();
+    });
+    scene.appendChild(dot);
+  });
+}
+
+/* Species card */
+function openSpeciesCard(item, kind) {
+  $("#spEm").textContent = item.em;
+  $("#spName").textContent = item.name;
+  $("#spSci").textContent = item.sci || "—";
+  const kindBadge = $("#spKind");
+  kindBadge.className = "kind-badge " + kind;
+  kindBadge.textContent = kind === "biotic" ? "Biótico · Vivo" : "Abiótico · No vivo";
+  $("#spFact").textContent = item.fact;
+  const status = STATUS[item.status || "abio"];
+  $("#spDot").style.background = status.color;
+  $("#spStatus").textContent = status.label;
+  $("#speciesCard").classList.add("show");
+
+  state.species.add(`${state.currentEco.id}:${item.name}`);
+  if (state.species.size >= 10) unlock("biologist");
+  if (state.species.size >= 20) unlock("master_biol");
+}
+$("#speciesClose").addEventListener("click", () => $("#speciesCard").classList.remove("show"));
+
+/* ==================================================================
+   SCENE CONTROLS — Day/Night, sound, fullscreen, weather
+   ================================================================== */
+$("#btnDayNight").addEventListener("click", () => {
+  state.isNight = !state.isNight;
+  $("#btnDayNight").textContent = state.isNight ? "🌙" : "☀️";
+  $("#btnDayNight").classList.toggle("active", state.isNight);
+  if (state.isNight) unlock("night_owl");
+  playClick();
+});
+$("#btnSound").addEventListener("click", () => {
+  state.soundOn = !state.soundOn;
+  $("#btnSound").textContent = state.soundOn ? "🔊" : "🔇";
+  $("#btnSound").classList.toggle("active", state.soundOn);
+  if (state.soundOn) { ensureAudio(); playTone([523, 659], 0.1); }
+});
+$("#btnFullscreen").addEventListener("click", () => {
+  const scene = $("#scene");
+  if (!document.fullscreenElement) scene.requestFullscreen?.();
+  else document.exitFullscreen?.();
+});
+$$(".weather-bar button").forEach(b => {
+  b.addEventListener("click", () => {
+    $$(".weather-bar button").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    state.weather = b.dataset.weather;
+    weatherTried.add(state.weather);
+    if (weatherTried.size >= 4) unlock("weather_god");
+    playClick();
+  });
+});
+
+/* ==================================================================
+   IMPACT SLIDER
+   ================================================================== */
+const impactSlider = $("#impactSlider");
+impactSlider.addEventListener("input", e => updateImpact(+e.target.value));
+function updateImpact(value) {
+  state.impact = value;
+  Scene.setImpact(value / 100);
+  let label = "Sano", msgIdx = 0;
+  if (value < 25)       { label = "Sano";       msgIdx = 0; }
+  else if (value < 55)  { label = "Alterado";   msgIdx = 1; }
+  else if (value < 80)  { label = "Degradado";  msgIdx = 2; }
+  else                  { label = "Crítico";    msgIdx = 3; }
+  $("#impactLabel").textContent = label;
+  const colors = { "Sano":"#4ade80", "Alterado":"#fbbf24", "Degradado":"#fb923c", "Crítico":"#f87171" };
+  $("#impactLabel").style.color = colors[label];
+  $("#impactMsg").textContent = state.currentEco.impactMessages[msgIdx];
+}
+
+/* ==================================================================
+   RESCUE MODE — click pollution in the scene to clean it up
+   ================================================================== */
+$("#btnRescue").addEventListener("click", () => {
+  Scene.startRescue();
+  $("#sceneOverlay").textContent = "🌱 MODO RESCATE: haz click en la basura, troncos talados y parches dañados para sanar el ecosistema.";
+});
+
+/* ==================================================================
+   CANVAS SCENE — detailed, creative, fun
+   ================================================================== */
+const Scene = (() => {
+  const canvas = $("#sceneCanvas");
+  const ctx = canvas.getContext("2d");
+  let w = 0, h = 0, dpr = 1;
+  let rafId = null;
+  let t0 = performance.now();
+  let eco = null;
+  let particles = [];   // weather
+  let creatures = [];   // animals
+  let flora = [];       // plants/static (for variation)
+  let pollution = [];   // rescue targets
+  let pops = [];        // floating particles (rescue pop, hearts)
+  let impact = 0.2;
+  let rescueGoal = 0;
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = canvas.getBoundingClientRect();
+    w = rect.width; h = rect.height;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener("resize", resize);
+
+  canvas.addEventListener("click", onClick);
+
+  function onClick(e) {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    // Rescue mode
+    if (state.rescueMode) {
+      for (let i = pollution.length - 1; i >= 0; i--) {
+        const p = pollution[i];
+        const dx = p.x - mx, dy = p.y - my;
+        if (dx * dx + dy * dy < p.r * p.r * 1.5) {
+          pollution.splice(i, 1);
+          pops.push({ x: mx, y: my, life: 40, em: "✨", size: 20 });
+          playCorrect();
+          rescueGoal--;
+          if (rescueGoal <= 0) finishRescue();
+          return;
+        }
+      }
+      // Missed click: still pop a small particle
+      pops.push({ x: mx, y: my, life: 20, em: "❓", size: 14 });
+      return;
+    }
+    // Normal click: create a gentle ripple / tap heart
+    pops.push({ x: mx, y: my, life: 40, em: "💚", size: 16 });
+  }
+
+  function load(e) {
+    eco = e; resize();
+    buildWeather(); buildCreatures(); buildFlora();
+    pollution = []; pops = [];
+    if (!rafId) rafId = requestAnimationFrame(loop);
+  }
+
+  function setImpact(v) { impact = v; }
+
+  function startRescue() {
+    state.rescueMode = true;
+    pollution = [];
+    rescueGoal = 8 + Math.floor(impact * 6);
+    for (let i = 0; i < rescueGoal; i++) {
+      pollution.push({
+        x: rand(40, w - 40),
+        y: rand(h * 0.55, h * 0.92),
+        r: 16,
+        em: pick(["🗑️","🛢️","🥤","♻️","🪵","💀"]),
+        bob: rand(0, Math.PI * 2)
+      });
+    }
+  }
+  function finishRescue() {
+    state.rescueMode = false;
+    // Fireworks of hearts & flowers
+    for (let i = 0; i < 30; i++) {
+      pops.push({
+        x: rand(0, w), y: rand(0, h * 0.6),
+        life: 60, em: pick(["🌱","🌸","💚","🦋","✨"]),
+        size: 20
+      });
+    }
+    // Snap slider back to healthy
+    impactSlider.value = 10;
+    updateImpact(10);
+    unlock("healer");
+    fireConfetti();
+    $("#sceneOverlay").textContent = `🌿 ¡Rescate completado! Sanaste la ${eco.name}.`;
+  }
+
+  /* ---------- weather particles ---------- */
+  function buildWeather() {
+    particles = [];
+    // ambient particles per ecosystem baseline
+    if (eco.id === "selva") for (let i = 0; i < 40; i++) particles.push(ambientLeaf());
+    if (eco.id === "desierto") for (let i = 0; i < 40; i++) particles.push(dustParticle());
+    if (eco.id === "arrecife") for (let i = 0; i < 60; i++) particles.push(bubble());
+    if (eco.id === "bosque") for (let i = 0; i < 20; i++) particles.push(pollen());
+    if (eco.id === "manglar") for (let i = 0; i < 20; i++) particles.push(shine());
+  }
+  function ambientLeaf() {
+    return { type:"leaf", x:rand(0,w), y:rand(0,h), vx:rand(-0.2,0.6), vy:rand(0.2,0.8),
+             rot:rand(0,Math.PI*2), vr:rand(-0.05,0.05), size:rand(4,8),
+             color:pick(["#4ade80","#22c55e","#16a34a","#86efac"]) };
+  }
+  function rainDrop() {
+    return { type:"rain", x:rand(0,w), y:rand(-50, h), vy:rand(10,14), vx:rand(-2,-1),
+             len:rand(10,18), alpha:rand(0.4,0.7) };
+  }
+  function snowish() {
+    return { type:"snow", x:rand(0,w), y:rand(0,h), vy:rand(0.4,0.9), vx:rand(-0.4,0.4),
+             r:rand(1.2,2.8), alpha:rand(0.4,0.8) };
+  }
+  function dustParticle() {
+    return { type:"dust", x:rand(0,w), y:rand(h*0.5, h), vx:rand(0.3,1.1), vy:rand(-0.1,0.1),
+             r:rand(1,3), alpha:rand(0.1,0.3) };
+  }
+  function bubble() {
+    return { type:"bubble", x:rand(0,w), y:rand(0,h), vy:rand(-1.5,-0.4),
+             r:rand(1,4), alpha:rand(0.3,0.6), phase:rand(0,Math.PI*2) };
+  }
+  function pollen() {
+    return { type:"pollen", x:rand(0,w), y:rand(0,h), vy:rand(-0.3,0.3), vx:rand(-0.3,0.3),
+             r:rand(0.8,1.8), alpha:rand(0.3,0.6), phase:rand(0,Math.PI*2) };
+  }
+  function shine() {
+    return { type:"shine", x:rand(0,w), y:rand(h*0.55, h), phase:rand(0,Math.PI*2),
+             len:rand(15,40), alpha:rand(0.15,0.3) };
+  }
+  function lightning() {
+    return { type:"flash", life: 6 };
+  }
+
+  function applyWeather() {
+    // Add extra particles based on weather
+    if (state.weather === "rain" && Math.random() < 0.5) particles.push(rainDrop());
+    if (state.weather === "storm") {
+      if (Math.random() < 0.9) particles.push(rainDrop());
+      if (Math.random() < 0.005) particles.push(lightning());
+    }
+    if (state.weather === "wind" && Math.random() < 0.3) particles.push(ambientLeaf());
+  }
+
+  /* ---------- creatures ---------- */
+  function buildCreatures() {
+    creatures = [];
+    if (eco.id === "selva") {
+      for (let i = 0; i < 3; i++) creatures.push({ type:"bird", x:rand(0,w), y:rand(40,h*0.25), vx:rand(0.8,1.8), phase:rand(0,Math.PI*2), color:pick(["#f59e0b","#ef4444","#3b82f6"]) });
+      creatures.push({ type:"monkey", x:w*0.3, y:h*0.3, vx:0, swingPhase:0 });
+      creatures.push({ type:"jaguar", x:w*0.15, y:h*0.76, vx:0.5, phase:0 });
+      for (let i = 0; i < 2; i++) creatures.push({ type:"butterfly", x:rand(0,w), y:rand(h*0.4,h*0.75), phase:rand(0,Math.PI*2), size:rand(6,9), color:pick(["#eab308","#ec4899","#06b6d4"]) });
+      creatures.push({ type:"frog", x:w*0.7, y:h*0.78, phase:0 });
+    }
+    if (eco.id === "desierto") {
+      creatures.push({ type:"tumble", x:-50, y:h*0.85, vx:1.4, r:20, phase:0 });
+      creatures.push({ type:"roadrunner", x:-80, y:h*0.87, vx:3, phase:0 });
+      creatures.push({ type:"coyote", x:w*0.7, y:h*0.85, vx:-0.5, phase:0 });
+      for (let i = 0; i < 2; i++) creatures.push({ type:"vulture", x:rand(0,w), y:rand(h*0.1, h*0.3), vx:rand(0.3,0.8), phase:rand(0,Math.PI*2) });
+      creatures.push({ type:"lizard", x:w*0.45, y:h*0.9, vx:0, phase:0, visible:true });
+    }
+    if (eco.id === "arrecife") {
+      for (let i = 0; i < 10; i++) creatures.push({
+        type:"fish", x:rand(0,w), y:rand(40,h-60),
+        vx:(Math.random()<0.5?-1:1)*rand(0.6,1.6),
+        size:rand(8,14), color:pick(["#f59e0b","#fbbf24","#f87171","#fb923c","#fde68a","#22d3ee"]),
+        phase:rand(0,Math.PI*2)
+      });
+      creatures.push({ type:"turtle", x:w*0.15, y:h*0.55, vx:0.4, phase:0 });
+      creatures.push({ type:"shark", x:-80, y:h*0.5, vx:1.0, phase:0 });
+      creatures.push({ type:"octopus", x:w*0.8, y:h*0.82, phase:0 });
+      for (let i = 0; i < 2; i++) creatures.push({ type:"jellyfish", x:rand(w*0.2,w*0.8), y:rand(h*0.2,h*0.5), phase:rand(0,Math.PI*2) });
+    }
+    if (eco.id === "bosque") {
+      for (let i = 0; i < 25; i++) creatures.push({
+        type:"monarch", x:rand(0,w), y:rand(0,h),
+        vx:rand(-0.5,1.2), vy:rand(-0.5,0.5),
+        phase:rand(0,Math.PI*2), size:rand(5,9)
+      });
+      creatures.push({ type:"deer", x:w*0.15, y:h*0.82, vx:0.3, phase:0 });
+      creatures.push({ type:"squirrel", x:w*0.7, y:h*0.8, phase:0, vx:1.2, flip:false });
+      creatures.push({ type:"owl", x:w*0.85, y:h*0.3, phase:0, visible: state.isNight });
+    }
+    if (eco.id === "manglar") {
+      for (let i = 0; i < 3; i++) creatures.push({ type:"heron", x:80+i*200, y:h*0.72, phase:rand(0,Math.PI*2) });
+      creatures.push({ type:"croc", x:w*0.5, y:h*0.76, vx:0.3, phase:0 });
+      for (let i = 0; i < 4; i++) creatures.push({ type:"crab", x:rand(0,w), y:h*0.92+rand(-4,4), vx:rand(-0.3,0.3)||0.2, phase:rand(0,Math.PI*2) });
+      creatures.push({ type:"flamingo", x:w*0.3, y:h*0.72, phase:0 });
+      for (let i = 0; i < 3; i++) creatures.push({ type:"smallFish", x:rand(0,w), y:rand(h*0.78,h*0.88), vx:rand(0.5,1.2), size:5 });
+    }
+  }
+
+  function buildFlora() {
+    flora = [];
+  }
+
+  /* ---------- drawing: backgrounds ---------- */
+  function drawBackground() {
+    const dayPalette = eco.palette.sky;
+    const nightPalette = ["#020617", "#0f172a", "#1e293b"];
+    const pal = state.isNight ? nightPalette : dayPalette;
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, pal[0]); g.addColorStop(0.55, pal[1]); g.addColorStop(1, pal[2]);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+
+    if (state.isNight) {
+      // Stars
+      ctx.fillStyle = "rgba(255,255,255,0.9)";
+      for (let i = 0; i < 50; i++) {
+        const x = (i * 53 % w), y = (i * 97) % (h * 0.5);
+        const tw = 0.5 + Math.sin(performance.now() * 0.002 + i) * 0.5;
+        ctx.globalAlpha = 0.4 + tw * 0.6;
+        ctx.fillRect(x, y, 1.5, 1.5);
+      }
+      ctx.globalAlpha = 1;
+      // Moon
+      ctx.fillStyle = "#e2e8f0";
+      ctx.beginPath(); ctx.arc(w * 0.82, h * 0.2, 30, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "rgba(148, 163, 184, 0.5)";
+      ctx.beginPath(); ctx.arc(w * 0.80, h * 0.19, 6, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(w * 0.84, h * 0.22, 4, 0, Math.PI * 2); ctx.fill();
+    } else {
+      // Sun for desert specifically
+      if (eco.id === "desierto") {
+        const sunGrad = ctx.createRadialGradient(w*0.82, h*0.22, 20, w*0.82, h*0.22, 120);
+        sunGrad.addColorStop(0, "rgba(253, 224, 71, 1)");
+        sunGrad.addColorStop(0.3, "rgba(253, 224, 71, 0.6)");
+        sunGrad.addColorStop(1, "rgba(253, 224, 71, 0)");
+        ctx.fillStyle = sunGrad;
+        ctx.fillRect(w*0.6, 0, w*0.4, h*0.5);
+        ctx.fillStyle = "#fde047";
+        ctx.beginPath(); ctx.arc(w*0.82, h*0.22, 40, 0, Math.PI*2); ctx.fill();
+      }
+      // Clouds
+      if (state.weather !== "storm") drawClouds();
+    }
+  }
+  function drawClouds() {
+    ctx.fillStyle = "rgba(255,255,255,0.3)";
+    const clouds = [[0.15, 0.15], [0.4, 0.1], [0.65, 0.18]];
+    clouds.forEach(([px, py]) => {
+      const x = px * w, y = py * h;
+      ctx.beginPath();
+      ctx.ellipse(x, y, 30, 10, 0, 0, Math.PI * 2);
+      ctx.ellipse(x + 20, y - 5, 25, 12, 0, 0, Math.PI * 2);
+      ctx.ellipse(x - 20, y - 3, 20, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  /* ---------- each ecosystem's ground ---------- */
+  function drawGround(t) {
+    const dmg = impact;
+    if (eco.id === "selva") drawSelva(t, dmg);
+    else if (eco.id === "desierto") drawDesierto(t, dmg);
+    else if (eco.id === "arrecife") drawArrecife(t, dmg);
+    else if (eco.id === "bosque") drawBosque(t, dmg);
+    else if (eco.id === "manglar") drawManglar(t, dmg);
+  }
+
+  /* ----- Selva ----- */
+  function drawSelva(t, dmg) {
+    const colors = state.isNight
+      ? ["#052b1f","#03200f","#011008","#000000"]
+      : ["#0b5e4a","#0f4a3a","#0a3a2d","#072820"];
+    colors.forEach((c, i) => {
+      ctx.fillStyle = c;
+      ctx.beginPath();
+      const y0 = h * (0.55 + i * 0.08);
+      ctx.moveTo(0, y0);
+      for (let x = 0; x <= w; x += 15) {
+        const yy = y0 + Math.sin(x * 0.02 + i + t * 0.0003) * 10;
+        ctx.lineTo(x, yy);
+      }
+      ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath(); ctx.fill();
+    });
+    // ceiba big tree in back
+    drawCeiba(w * 0.8, h * 0.62, 190 * (1 - dmg * 0.4));
+    // Smaller trees
+    const treeCount = Math.max(3, 14 - Math.floor(dmg * 12));
+    for (let i = 0; i < treeCount; i++) {
+      const x = (i * (w / treeCount)) + Math.sin(t * 0.0002 + i) * 3;
+      const y = h * 0.65;
+      drawJungleTree(x, y, 100 - (i % 3) * 20, t, i);
+    }
+    // Vines
+    if (!state.isNight) {
+      ctx.strokeStyle = "rgba(22, 101, 52, 0.5)";
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 5; i++) {
+        const vx = 100 + i * 180;
+        ctx.beginPath(); ctx.moveTo(vx, h * 0.2);
+        for (let y = h * 0.2; y < h * 0.6; y += 10) {
+          ctx.lineTo(vx + Math.sin((y + t * 0.0005) * 0.03) * 8, y);
+        }
+        ctx.stroke();
+      }
+    }
+    // Fireflies at night
+    if (state.isNight) {
+      for (let i = 0; i < 12; i++) {
+        const fx = (Math.sin(t * 0.0005 + i) * 0.5 + 0.5) * w;
+        const fy = (Math.cos(t * 0.0007 + i * 0.7) * 0.5 + 0.5) * h * 0.7 + h * 0.2;
+        const glow = Math.sin(t * 0.003 + i) * 0.5 + 0.5;
+        ctx.fillStyle = `rgba(250, 204, 21, ${glow * 0.9})`;
+        ctx.beginPath(); ctx.arc(fx, fy, 2 + glow * 2, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    // Damage overlay
+    if (dmg > 0.3) {
+      ctx.fillStyle = `rgba(60,30,10,${(dmg - 0.3) * 0.9})`;
+      ctx.fillRect(0, h * 0.7, w, h * 0.3);
+    }
+  }
+  function drawJungleTree(x, y, height, t, i) {
+    // trunk
+    ctx.fillStyle = "#4a2c1a"; ctx.fillRect(x - 4, y, 8, height * 0.4);
+    // foliage layers (bigger, more lush)
+    const sway = Math.sin(t * 0.0008 + i) * 2;
+    for (let k = 0; k < 4; k++) {
+      ctx.fillStyle = state.isNight ? "#041f14" : `rgba(8,70,45,${0.7 + k * 0.08})`;
+      ctx.beginPath();
+      ctx.ellipse(x + sway, y - k * 22, 30 - k * 3, 22 - k * 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  function drawCeiba(x, y, size) {
+    // massive trunk with buttresses
+    ctx.fillStyle = "#3e2817";
+    ctx.beginPath();
+    ctx.moveTo(x - 25, y + size * 0.1);
+    ctx.lineTo(x - 10, y - size);
+    ctx.lineTo(x + 10, y - size);
+    ctx.lineTo(x + 25, y + size * 0.1);
+    ctx.closePath(); ctx.fill();
+    // roots/buttresses
+    ctx.beginPath();
+    ctx.moveTo(x - 25, y + size * 0.1);
+    ctx.quadraticCurveTo(x - 45, y + size * 0.05, x - 50, y + 10);
+    ctx.lineTo(x - 20, y + 10); ctx.closePath(); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x + 25, y + size * 0.1);
+    ctx.quadraticCurveTo(x + 45, y + size * 0.05, x + 50, y + 10);
+    ctx.lineTo(x + 20, y + 10); ctx.closePath(); ctx.fill();
+    // canopy - big
+    ctx.fillStyle = state.isNight ? "#041f14" : "#065f46";
+    for (let k = 0; k < 5; k++) {
+      ctx.beginPath();
+      ctx.ellipse(x + (k - 2) * 18, y - size - k * 4, 50 - k * 3, 30 - k, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  /* ----- Desierto ----- */
+  function drawDesierto(t, dmg) {
+    const dune = state.isNight
+      ? ["#3a2012","#2a1407","#1a0a04"]
+      : ["#c2571a","#a0420d","#7a2f08"];
+    dune.forEach((c, i) => {
+      ctx.fillStyle = c;
+      ctx.beginPath();
+      const y0 = h * (0.72 + i * 0.08);
+      ctx.moveTo(0, y0);
+      for (let x = 0; x <= w; x += 20) {
+        ctx.lineTo(x, y0 + Math.sin(x * 0.015 + i) * 14);
+      }
+      ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath(); ctx.fill();
+    });
+    // Big saguaro (hero)
+    drawSaguaro(w * 0.25, h * 0.72, 110);
+    // Smaller cacti
+    const cactusCount = Math.max(2, 6 - Math.floor(dmg * 5));
+    for (let i = 0; i < cactusCount; i++) {
+      const x = 140 + i * (w / cactusCount);
+      drawSaguaro(x, h * 0.75, 60 + (i % 2) * 25);
+    }
+    // Prickly pear
+    drawNopal(w * 0.55, h * 0.85);
+    drawNopal(w * 0.78, h * 0.88);
+    // Rocks
+    ctx.fillStyle = state.isNight ? "#1a0a04" : "#5c2907";
+    for (let i = 0; i < 6; i++) {
+      const rx = (i * 150 + 40) % w;
+      ctx.beginPath();
+      ctx.ellipse(rx, h * 0.92, 18, 7, 0, 0, Math.PI * 2); ctx.fill();
+    }
+    // skull if damaged
+    if (dmg > 0.7) drawCattleSkull(w * 0.5, h * 0.91);
+  }
+  function drawSaguaro(x, y, size) {
+    ctx.fillStyle = "#2f7a3a"; ctx.strokeStyle = "#1c4a24"; ctx.lineWidth = 2;
+    // main body
+    roundRect(x - 10, y - size, 20, size, 10); ctx.fill(); ctx.stroke();
+    // arms
+    roundRect(x - 26, y - size * 0.7, 16, size * 0.35, 8); ctx.fill(); ctx.stroke();
+    roundRect(x - 26, y - size * 0.92, 6, size * 0.26, 4); ctx.fill(); ctx.stroke();
+    roundRect(x + 10, y - size * 0.6, 16, size * 0.3, 8); ctx.fill(); ctx.stroke();
+    roundRect(x + 20, y - size * 0.85, 6, size * 0.25, 4); ctx.fill(); ctx.stroke();
+    // vertical ribs
+    ctx.strokeStyle = "rgba(28, 74, 36, 0.7)"; ctx.lineWidth = 1;
+    for (let i = -2; i <= 2; i++) {
+      ctx.beginPath(); ctx.moveTo(x + i * 4, y - size + 6); ctx.lineTo(x + i * 4, y - 6); ctx.stroke();
+    }
+    // flower on top
+    ctx.fillStyle = "#fde68a";
+    ctx.beginPath(); ctx.arc(x, y - size - 4, 4, 0, Math.PI * 2); ctx.fill();
+  }
+  function drawNopal(x, y) {
+    ctx.fillStyle = "#3d8b48"; ctx.strokeStyle = "#1b4a28"; ctx.lineWidth = 1.5;
+    // pads
+    [[0,0,28,18], [-18,-14,22,16], [18,-14,22,16], [0,-30,20,15]].forEach(([dx,dy,rx,ry]) => {
+      ctx.beginPath(); ctx.ellipse(x + dx, y + dy, rx, ry, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    });
+    // spines
+    ctx.strokeStyle = "#1b4a28"; ctx.lineWidth = 0.8;
+    for (let i = 0; i < 8; i++) {
+      const a = i * Math.PI / 4;
+      ctx.beginPath();
+      ctx.moveTo(x + Math.cos(a) * 10, y + Math.sin(a) * 6);
+      ctx.lineTo(x + Math.cos(a) * 16, y + Math.sin(a) * 10);
+      ctx.stroke();
+    }
+  }
+  function drawCattleSkull(x, y) {
+    ctx.fillStyle = "#e5e7eb";
+    ctx.beginPath(); ctx.ellipse(x, y, 18, 12, 0, 0, Math.PI * 2); ctx.fill();
+    // horns
+    ctx.strokeStyle = "#9ca3af"; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(x - 14, y - 6); ctx.quadraticCurveTo(x - 30, y - 20, x - 24, y - 30); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x + 14, y - 6); ctx.quadraticCurveTo(x + 30, y - 20, x + 24, y - 30); ctx.stroke();
+    // sockets
+    ctx.fillStyle = "#111827";
+    ctx.beginPath(); ctx.arc(x - 5, y - 1, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x + 5, y - 1, 3, 0, Math.PI * 2); ctx.fill();
+  }
+
+  /* ----- Arrecife ----- */
+  function drawArrecife(t, dmg) {
+    // Sea floor
+    const floor = state.isNight ? "#020617" : "#061f33";
+    const floorTop = state.isNight ? "#0a1a2e" : "#0a3a5a";
+    const g = ctx.createLinearGradient(0, h * 0.6, 0, h);
+    g.addColorStop(0, floorTop); g.addColorStop(1, floor);
+    ctx.fillStyle = g; ctx.fillRect(0, h * 0.6, w, h * 0.4);
+    // Sand dunes
+    ctx.fillStyle = state.isNight ? "#081024" : "#dcc48a";
+    ctx.beginPath();
+    ctx.moveTo(0, h * 0.9);
+    for (let x = 0; x <= w; x += 20) {
+      ctx.lineTo(x, h * 0.9 + Math.sin(x * 0.02) * 6);
+    }
+    ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
+    ctx.globalAlpha = 0.6; ctx.fill(); ctx.globalAlpha = 1;
+    // Corals
+    const coralCount = Math.max(4, 14 - Math.floor(dmg * 12));
+    const bleach = dmg;
+    for (let i = 0; i < coralCount; i++) {
+      const x = (i * 90 + 30) % w;
+      const baseHue = (340 - i * 30 + 360) % 360;
+      const color = `hsl(${baseHue}, ${70 - bleach * 65}%, ${55 + bleach * 40}%)`;
+      const type = i % 3;
+      if (type === 0) drawBrainCoral(x, h * 0.88, 22, color);
+      else if (type === 1) drawFanCoral(x, h * 0.88, 30, color);
+      else drawBranchCoral(x, h * 0.88, 40, color);
+    }
+    // Seaweed (kelp)
+    ctx.strokeStyle = state.isNight ? "#083344" : "#1b8379"; ctx.lineWidth = 3;
+    for (let i = 0; i < 10; i++) {
+      const x = (i * 110 + 20) % w;
+      ctx.beginPath(); ctx.moveTo(x, h);
+      for (let y = h; y > h * 0.75; y -= 6) {
+        ctx.lineTo(x + Math.sin((y + t * 0.001 + i) * 0.05) * 5, y);
+      }
+      ctx.stroke();
+    }
+    // Light rays from above
+    if (!state.isNight) {
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      for (let i = 0; i < 6; i++) {
+        const rx = (i * w / 5) + Math.sin(t * 0.0005 + i) * 20;
+        ctx.fillStyle = "rgba(255,255,255,0.05)";
+        ctx.beginPath();
+        ctx.moveTo(rx - 10, 0);
+        ctx.lineTo(rx + 10, 0);
+        ctx.lineTo(rx + 40, h * 0.6);
+        ctx.lineTo(rx - 40, h * 0.6);
+        ctx.closePath(); ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+  function drawBrainCoral(x, y, size, color) {
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(x, y, size, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,0.3)"; ctx.lineWidth = 1;
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath();
+      ctx.arc(x, y, size - i * 3, 0, Math.PI, true); ctx.stroke();
+    }
+  }
+  function drawFanCoral(x, y, size, color) {
+    ctx.strokeStyle = color; ctx.lineWidth = 2;
+    for (let i = 0; i < 10; i++) {
+      const a = -Math.PI / 2 + (i - 5) * 0.2;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + Math.cos(a) * size, y + Math.sin(a) * size);
+      ctx.stroke();
+    }
+  }
+  function drawBranchCoral(x, y, size, color) {
+    ctx.fillStyle = color;
+    for (let i = -2; i <= 2; i++) {
+      ctx.beginPath();
+      ctx.ellipse(x + i * 4, y - Math.abs(i) * 4 - size * 0.3, 4, size / 2, 0, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  /* ----- Bosque ----- */
+  function drawBosque(t, dmg) {
+    // Mountains
+    if (!state.isNight) {
+      ctx.fillStyle = "rgba(30,58,138,0.4)";
+      for (let i = 0; i < 4; i++) {
+        const mx = (i * w / 3) - 40;
+        ctx.beginPath();
+        ctx.moveTo(mx, h * 0.55);
+        ctx.lineTo(mx + 120, h * 0.28);
+        ctx.lineTo(mx + 240, h * 0.55);
+        ctx.closePath(); ctx.fill();
+        // snowy peaks
+        ctx.fillStyle = "rgba(255,255,255,0.4)";
+        ctx.beginPath();
+        ctx.moveTo(mx + 100, h * 0.32);
+        ctx.lineTo(mx + 120, h * 0.28);
+        ctx.lineTo(mx + 140, h * 0.32);
+        ctx.closePath(); ctx.fill();
+        ctx.fillStyle = "rgba(30,58,138,0.4)";
+      }
+    }
+    // Ground
+    ctx.fillStyle = state.isNight ? "#0c1d16" : "#0e3a22";
+    ctx.fillRect(0, h * 0.75, w, h * 0.25);
+    ctx.fillStyle = state.isNight ? "#143821" : "#1d5a38";
+    for (let i = 0; i < 10; i++) {
+      const x = i * (w / 10) + 20;
+      ctx.beginPath();
+      ctx.ellipse(x, h * 0.8, 40, 12, 0, 0, Math.PI * 2); ctx.fill();
+    }
+    // Pine trees (more lush, layered)
+    const treeCount = Math.max(4, 20 - Math.floor(dmg * 16));
+    for (let i = 0; i < treeCount; i++) {
+      const x = (i * (w / treeCount)) + Math.sin(t * 0.0001 + i) * 2;
+      const y = h * 0.8;
+      drawPine(x, y, 70 + (i % 4) * 16);
+    }
+    // Flowers
+    if (dmg < 0.6) {
+      for (let i = 0; i < 15; i++) {
+        const fx = (i * 80 + 40) % w;
+        drawSmallFlower(fx, h * 0.92);
+      }
+    }
+    // Stumps if damaged
+    if (dmg > 0.3) {
+      for (let i = 0; i < Math.floor(dmg * 6); i++) {
+        const sx = 100 + i * 150;
+        ctx.fillStyle = "#78350f";
+        ctx.fillRect(sx - 8, h * 0.86, 16, 16);
+        ctx.fillStyle = "#a16207";
+        ctx.beginPath(); ctx.ellipse(sx, h * 0.86, 10, 4, 0, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+  }
+  function drawPine(x, y, size) {
+    ctx.fillStyle = "#5a3b1a";
+    ctx.fillRect(x - 3, y, 6, size * 0.18);
+    ctx.fillStyle = state.isNight ? "#052e1c" : "#0f5132";
+    for (let k = 0; k < 5; k++) {
+      const top = y - size + k * (size * 0.18);
+      const width = 12 + k * 6;
+      ctx.beginPath();
+      ctx.moveTo(x, top);
+      ctx.lineTo(x - width, top + size * 0.22);
+      ctx.lineTo(x + width, top + size * 0.22);
+      ctx.closePath(); ctx.fill();
+    }
+    // top star/snow
+    if (!state.isNight) {
+      ctx.fillStyle = "rgba(255,255,255,0.5)";
+      ctx.beginPath(); ctx.arc(x, y - size, 2, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  function drawSmallFlower(x, y) {
+    const color = pick(["#f97316","#facc15","#ec4899","#a78bfa"]);
+    ctx.fillStyle = color;
+    for (let i = 0; i < 5; i++) {
+      const a = (i / 5) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.arc(x + Math.cos(a) * 3, y + Math.sin(a) * 3, 2, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.fillStyle = "#fde047";
+    ctx.beginPath(); ctx.arc(x, y, 1.5, 0, Math.PI * 2); ctx.fill();
+  }
+
+  /* ----- Manglar ----- */
+  function drawManglar(t, dmg) {
+    // Water
+    const g = ctx.createLinearGradient(0, h * 0.55, 0, h);
+    g.addColorStop(0, state.isNight ? "#042f2e" : "#115e59");
+    g.addColorStop(1, state.isNight ? "#010d0d" : "#042f2e");
+    ctx.fillStyle = g; ctx.fillRect(0, h * 0.55, w, h * 0.45);
+    // Ripples
+    ctx.strokeStyle = "rgba(94, 234, 212, 0.18)"; ctx.lineWidth = 1;
+    for (let i = 0; i < 10; i++) {
+      const y = h * 0.6 + i * 12;
+      ctx.beginPath(); ctx.moveTo(0, y + Math.sin(t * 0.002 + i) * 2);
+      for (let x = 0; x <= w; x += 10) {
+        ctx.lineTo(x, y + Math.sin(x * 0.05 + t * 0.002 + i) * 2);
+      }
+      ctx.stroke();
+    }
+    // Mangroves
+    const count = Math.max(3, 8 - Math.floor(dmg * 6));
+    for (let i = 0; i < count; i++) {
+      const x = (i * (w / count)) + 60;
+      drawMangrove(x, h * 0.6);
+    }
+    // Lily pads
+    if (dmg < 0.7) {
+      for (let i = 0; i < 6; i++) {
+        const lx = (i * 150 + 70) % w;
+        const ly = h * 0.78;
+        ctx.fillStyle = "#065f46";
+        ctx.beginPath(); ctx.ellipse(lx, ly, 18, 5, 0, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+  }
+  function drawMangrove(x, y) {
+    // roots (more dense)
+    ctx.strokeStyle = "#432218"; ctx.lineWidth = 3;
+    for (let i = -4; i <= 4; i++) {
+      ctx.beginPath();
+      ctx.moveTo(x + i * 6, y + 60);
+      ctx.quadraticCurveTo(x + i * 14, y + 25, x + i * 4, y);
+      ctx.stroke();
+    }
+    // trunk
+    ctx.fillStyle = "#5a3c20"; ctx.fillRect(x - 6, y - 55, 12, 55);
+    // canopy
+    ctx.fillStyle = state.isNight ? "#052e29" : "#0f766e";
+    for (let k = 0; k < 4; k++) {
+      ctx.beginPath();
+      ctx.ellipse(x + (k - 1.5) * 16, y - 65 - k * 6, 32, 22, 0, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  /* ---------- creatures drawing ---------- */
+  function updateDrawCreatures(t) {
+    creatures.forEach(c => {
+      if (c.type === "bird") {
+        c.x += c.vx; if (c.x > w + 30) { c.x = -30; c.y = rand(40, h * 0.25); }
+        c.phase += 0.3; drawBird(c.x, c.y, c.phase, c.color);
+      } else if (c.type === "tumble") {
+        c.x += c.vx; c.phase += 0.06;
+        if (c.x > w + 40) c.x = -40;
+        drawTumbleweed(c.x, c.y, c.r, c.phase);
+      } else if (c.type === "roadrunner") {
+        c.x += c.vx; c.phase += 0.4;
+        if (c.x > w + 40) c.x = -40;
+        drawRoadrunner(c.x, c.y, c.phase);
+      } else if (c.type === "coyote") {
+        c.phase += 0.1;
+        c.x += c.vx * (Math.sin(c.phase * 0.1) * 0.3 + 1);
+        if (c.x < -30) { c.vx = 0.5; } else if (c.x > w + 30) { c.vx = -0.5; }
+        drawCoyote(c.x, c.y, c.vx > 0, c.phase);
+      } else if (c.type === "vulture") {
+        c.x += c.vx * Math.sin(c.phase * 0.01 + 1);
+        c.phase += 0.05;
+        if (c.x > w + 30) c.x = -30;
+        drawVulture(c.x, c.y + Math.sin(c.phase) * 4, c.phase);
+      } else if (c.type === "lizard") {
+        c.phase += 0.01;
+        drawLizard(c.x + Math.sin(c.phase) * 20, c.y);
+      } else if (c.type === "fish") {
+        c.x += c.vx; c.phase += 0.15;
+        if (c.x > w + 30) c.x = -30;
+        if (c.x < -30) c.x = w + 30;
+        drawFish(c.x, c.y + Math.sin(c.phase) * 3, c.size, c.vx > 0, c.color);
+      } else if (c.type === "turtle") {
+        c.x += c.vx; c.phase += 0.02;
+        if (c.x > w + 40) c.x = -60;
+        drawTurtle(c.x, c.y + Math.sin(c.phase * 3) * 5);
+      } else if (c.type === "shark") {
+        c.x += c.vx; c.phase += 0.1;
+        if (c.x > w + 80) c.x = -100;
+        drawShark(c.x, c.y + Math.sin(c.phase * 0.5) * 10, c.phase);
+      } else if (c.type === "octopus") {
+        c.phase += 0.05;
+        drawOctopus(c.x, c.y + Math.sin(c.phase) * 3, c.phase);
+      } else if (c.type === "jellyfish") {
+        c.phase += 0.04;
+        drawJellyfish(c.x, c.y + Math.sin(c.phase) * 20, c.phase);
+      } else if (c.type === "monarch") {
+        c.x += c.vx; c.y += c.vy;
+        c.vy += Math.sin(c.phase) * 0.02;
+        c.phase += 0.2;
+        if (c.x > w + 10) c.x = -10;
+        if (c.x < -10) c.x = w + 10;
+        if (c.y > h) c.y = 0;
+        if (c.y < -5) c.y = h;
+        drawMonarch(c.x, c.y, c.size, c.phase);
+      } else if (c.type === "deer") {
+        c.phase += 0.05; c.x += c.vx;
+        if (c.x > w + 20) c.x = -40;
+        drawDeer(c.x, c.y + Math.sin(c.phase) * 0.8, c.vx > 0);
+      } else if (c.type === "squirrel") {
+        c.x += c.vx; c.phase += 0.3;
+        if (c.x > w + 20) { c.x = -20; c.flip = false; }
+        drawSquirrel(c.x, c.y + Math.abs(Math.sin(c.phase)) * 4, c.phase);
+      } else if (c.type === "owl") {
+        c.visible = state.isNight;
+        if (c.visible) {
+          c.phase += 0.02;
+          drawOwl(c.x, c.y + Math.sin(c.phase) * 2);
+        }
+      } else if (c.type === "heron") {
+        c.phase += 0.02;
+        drawHeron(c.x, c.y + Math.sin(c.phase) * 1.2);
+      } else if (c.type === "croc") {
+        c.phase += 0.02; c.x += c.vx;
+        if (c.x > w + 60) c.x = -80;
+        drawCroc(c.x, c.y + Math.sin(c.phase) * 1, c.phase);
+      } else if (c.type === "crab") {
+        c.phase += 0.15; c.x += c.vx;
+        if (c.x > w) c.x = -10;
+        if (c.x < -10) c.x = w;
+        drawCrab(c.x, c.y + Math.abs(Math.sin(c.phase)) * 2, c.phase);
+      } else if (c.type === "flamingo") {
+        c.phase += 0.015;
+        drawFlamingo(c.x, c.y + Math.sin(c.phase) * 1);
+      } else if (c.type === "smallFish") {
+        c.x += c.vx;
+        if (c.x > w + 20) c.x = -20;
+        drawFish(c.x, c.y, c.size, true, "#fcd34d");
+      } else if (c.type === "monkey") {
+        c.swingPhase += 0.04;
+        drawMonkey(c.x + Math.sin(c.swingPhase) * 60, c.y + Math.abs(Math.sin(c.swingPhase)) * 10);
+      } else if (c.type === "jaguar") {
+        c.phase += 0.015; c.x += c.vx * Math.sin(c.phase * 0.3);
+        if (c.x > w * 0.4) c.vx = -0.5;
+        if (c.x < 60) c.vx = 0.5;
+        drawJaguar(c.x, c.y, c.vx > 0, c.phase);
+      } else if (c.type === "butterfly") {
+        c.phase += 0.3;
+        drawMonarch(c.x + Math.sin(c.phase * 0.3) * 40, c.y + Math.cos(c.phase * 0.4) * 20, c.size, c.phase);
+      } else if (c.type === "frog") {
+        c.phase += 0.06;
+        drawFrog(c.x, c.y + Math.abs(Math.sin(c.phase)) * 3);
+      }
+    });
+  }
+
+  /* ----- creature drawing helpers ----- */
+  function drawBird(x, y, phase, color) {
+    const flap = Math.sin(phase) * 6;
+    ctx.strokeStyle = color; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(x - 12, y + flap);
+    ctx.quadraticCurveTo(x, y - 6, x + 12, y + flap);
+    ctx.stroke();
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2); ctx.fill();
+  }
+  function drawTumbleweed(x, y, r, rot) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+    ctx.strokeStyle = "#6b3e1a"; ctx.lineWidth = 1.2;
+    for (let i = 0; i < 14; i++) {
+      ctx.beginPath(); ctx.moveTo(0, 0);
+      ctx.lineTo(Math.cos(i) * r, Math.sin(i * 1.7) * r);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function drawRoadrunner(x, y, phase) {
+    const leg = Math.sin(phase) * 4;
+    ctx.fillStyle = "#1f2937";
+    ctx.beginPath(); ctx.ellipse(x, y, 16, 9, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x + 15, y - 7, 6, 0, Math.PI * 2); ctx.fill();
+    // crest
+    ctx.beginPath();
+    ctx.moveTo(x + 17, y - 12); ctx.lineTo(x + 20, y - 18); ctx.lineTo(x + 14, y - 15);
+    ctx.closePath(); ctx.fill();
+    // legs
+    ctx.strokeStyle = "#111827"; ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x - 4, y + 7); ctx.lineTo(x - 8 + leg, y + 18);
+    ctx.moveTo(x + 4, y + 7); ctx.lineTo(x + 8 - leg, y + 18);
+    ctx.stroke();
+    // tail
+    ctx.beginPath();
+    ctx.moveTo(x - 14, y); ctx.lineTo(x - 30, y - 6);
+    ctx.stroke();
+    // beak
+    ctx.fillStyle = "#f59e0b";
+    ctx.beginPath();
+    ctx.moveTo(x + 20, y - 7); ctx.lineTo(x + 28, y - 6); ctx.lineTo(x + 20, y - 5);
+    ctx.closePath(); ctx.fill();
+  }
+  function drawCoyote(x, y, faceRight, phase) {
+    ctx.save(); ctx.translate(x, y); if (!faceRight) ctx.scale(-1, 1);
+    ctx.fillStyle = "#78574a";
+    // body
+    ctx.beginPath(); ctx.ellipse(0, 0, 20, 10, 0, 0, Math.PI * 2); ctx.fill();
+    // head
+    ctx.beginPath(); ctx.ellipse(20, -4, 10, 7, 0, 0, Math.PI * 2); ctx.fill();
+    // snout
+    ctx.beginPath(); ctx.ellipse(28, -2, 5, 3, 0, 0, Math.PI * 2); ctx.fill();
+    // ears
+    ctx.beginPath();
+    ctx.moveTo(15, -10); ctx.lineTo(14, -18); ctx.lineTo(20, -12); ctx.closePath(); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(22, -10); ctx.lineTo(22, -17); ctx.lineTo(28, -10); ctx.closePath(); ctx.fill();
+    // legs
+    ctx.fillRect(-10, 8, 3, 8 + Math.sin(phase) * 2);
+    ctx.fillRect(10, 8, 3, 8 - Math.sin(phase) * 2);
+    // tail
+    ctx.beginPath(); ctx.moveTo(-18, -2); ctx.quadraticCurveTo(-28, -4, -26, 4); ctx.lineTo(-18, 2); ctx.closePath(); ctx.fill();
+    // eye
+    ctx.fillStyle = "#000"; ctx.beginPath(); ctx.arc(24, -5, 1, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function drawVulture(x, y, phase) {
+    const flap = Math.sin(phase) * 8;
+    ctx.strokeStyle = "#1f2937"; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x - 20, y + flap);
+    ctx.lineTo(x - 10, y - 3);
+    ctx.lineTo(x + 10, y - 3);
+    ctx.lineTo(x + 20, y + flap);
+    ctx.stroke();
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
+  }
+  function drawLizard(x, y) {
+    ctx.fillStyle = "#854d0e";
+    ctx.beginPath(); ctx.ellipse(x, y, 16, 5, 0, 0, Math.PI * 2); ctx.fill();
+    // tail
+    ctx.beginPath();
+    ctx.moveTo(x - 14, y); ctx.quadraticCurveTo(x - 24, y + 3, x - 30, y - 1);
+    ctx.quadraticCurveTo(x - 24, y + 1, x - 14, y); ctx.fill();
+    // head
+    ctx.beginPath(); ctx.ellipse(x + 15, y - 1, 5, 3, 0, 0, Math.PI * 2); ctx.fill();
+    // spots
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(x + 16, y - 2, 1, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#d97706";
+    for (let i = -2; i <= 2; i++) {
+      ctx.beginPath(); ctx.arc(x + i * 3, y - 1, 1.2, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  function drawFish(x, y, size, faceRight, color) {
+    ctx.save(); ctx.translate(x, y); if (!faceRight) ctx.scale(-1, 1);
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.ellipse(0, 0, size, size * 0.5, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(-size, 0);
+    ctx.lineTo(-size - size * 0.7, -size * 0.5);
+    ctx.lineTo(-size - size * 0.7, size * 0.5);
+    ctx.closePath(); ctx.fill();
+    // stripes
+    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    for (let i = -1; i <= 1; i++) {
+      ctx.fillRect(i * 3 - 1, -size * 0.4, 1.5, size * 0.8);
+    }
+    // eye
+    ctx.fillStyle = "#fff";
+    ctx.beginPath(); ctx.arc(size * 0.5, -size * 0.15, 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(size * 0.55, -size * 0.15, 1, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function drawTurtle(x, y) {
+    ctx.save(); ctx.translate(x, y);
+    ctx.fillStyle = "#0f766e";
+    ctx.beginPath(); ctx.ellipse(0, 0, 26, 14, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#064e3b";
+    for (let i = -2; i <= 2; i++) {
+      ctx.beginPath();
+      ctx.arc(i * 8, 0, 3.5, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.fillStyle = "#0f766e";
+    ctx.beginPath(); ctx.arc(26, -2, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(-12, 12, 10, 4, 0.5, 0, Math.PI * 2);
+    ctx.ellipse(12, 12, 10, 4, -0.5, 0, Math.PI * 2);
+    ctx.ellipse(-10, -10, 8, 3, -0.5, 0, Math.PI * 2);
+    ctx.ellipse(10, -10, 8, 3, 0.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(28, -3, 1, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function drawShark(x, y, phase) {
+    ctx.save(); ctx.translate(x, y);
+    ctx.fillStyle = "#475569";
+    // body
+    ctx.beginPath();
+    ctx.moveTo(-40, 0); ctx.quadraticCurveTo(-30, -15, 20, -8);
+    ctx.lineTo(40, 0); ctx.lineTo(20, 8); ctx.quadraticCurveTo(-30, 15, -40, 0); ctx.fill();
+    // fin
+    ctx.beginPath();
+    ctx.moveTo(0, -10); ctx.lineTo(-5, -22); ctx.lineTo(8, -10); ctx.closePath(); ctx.fill();
+    // tail
+    ctx.beginPath();
+    ctx.moveTo(40, 0); ctx.lineTo(52, -12); ctx.lineTo(46, 0); ctx.lineTo(52, 12); ctx.closePath(); ctx.fill();
+    // gills
+    ctx.strokeStyle = "#1e293b"; ctx.lineWidth = 1;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath(); ctx.moveTo(10 + i * 3, -3); ctx.lineTo(10 + i * 3, 3); ctx.stroke();
+    }
+    // eye
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(25, -4, 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function drawOctopus(x, y, phase) {
+    ctx.save(); ctx.translate(x, y);
+    ctx.fillStyle = "#9333ea";
+    ctx.beginPath(); ctx.arc(0, -6, 14, 0, Math.PI); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(0, -6, 14, 10, 0, 0, Math.PI * 2); ctx.fill();
+    // tentacles
+    for (let i = -3; i <= 3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(i * 3, 4);
+      ctx.quadraticCurveTo(i * 6 + Math.sin(phase + i) * 4, 12, i * 4, 20 + Math.sin(phase + i) * 3);
+      ctx.lineWidth = 3; ctx.strokeStyle = "#9333ea"; ctx.stroke();
+    }
+    // eyes
+    ctx.fillStyle = "#fff";
+    ctx.beginPath(); ctx.arc(-4, -8, 2.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(4, -8, 2.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(-4, -8, 1, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(4, -8, 1, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function drawJellyfish(x, y, phase) {
+    const pulse = Math.sin(phase) * 2;
+    ctx.fillStyle = "rgba(236, 72, 153, 0.5)";
+    ctx.beginPath(); ctx.arc(x, y, 14 + pulse, Math.PI, 0); ctx.fill();
+    ctx.strokeStyle = "rgba(236, 72, 153, 0.6)"; ctx.lineWidth = 1.5;
+    for (let i = -2; i <= 2; i++) {
+      ctx.beginPath();
+      ctx.moveTo(x + i * 3, y);
+      ctx.quadraticCurveTo(x + i * 5 + Math.sin(phase + i) * 2, y + 10, x + i * 3, y + 20);
+      ctx.stroke();
+    }
+  }
+  function drawMonarch(x, y, size, phase) {
+    const flap = (Math.sin(phase) + 1) * 0.5;
+    ctx.save(); ctx.translate(x, y);
+    // orange wings with black pattern
+    const drawWing = (scaleX) => {
+      ctx.save(); ctx.scale(scaleX, 1);
+      ctx.fillStyle = "#f97316";
+      ctx.beginPath(); ctx.ellipse(size * 0.9, -size * 0.4, size, size * 0.6, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#7c2d12";
+      ctx.strokeStyle = "#7c2d12"; ctx.lineWidth = 0.8;
+      // veins
+      ctx.beginPath();
+      ctx.moveTo(size * 0.9, -size * 0.4);
+      ctx.lineTo(size * 1.8, -size * 0.6);
+      ctx.moveTo(size * 0.9, -size * 0.4);
+      ctx.lineTo(size * 1.8, -size * 0.2);
+      ctx.stroke();
+      // black border
+      ctx.beginPath(); ctx.ellipse(size * 0.9, -size * 0.4, size, size * 0.6, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = "#7c2d12"; ctx.lineWidth = 1.5; ctx.stroke();
+      // white dots
+      ctx.fillStyle = "#fff";
+      ctx.beginPath(); ctx.arc(size * 1.4, -size * 0.6, 0.8, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(size * 1.7, -size * 0.4, 0.8, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    };
+    // left wing
+    ctx.save(); ctx.scale(-flap, 1); drawWing(1); ctx.restore();
+    // right wing
+    ctx.save(); ctx.scale(flap, 1); drawWing(1); ctx.restore();
+    // body
+    ctx.fillStyle = "#0b0b0b";
+    ctx.beginPath(); ctx.ellipse(0, 0, size * 0.2, size * 0.9, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function drawDeer(x, y, faceRight) {
+    ctx.save(); ctx.translate(x, y); if (!faceRight) ctx.scale(-1, 1);
+    ctx.fillStyle = "#a16207";
+    ctx.beginPath(); ctx.ellipse(0, -5, 22, 12, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(22, -14, 8, 6, 0, 0, Math.PI * 2); ctx.fill();
+    // neck
+    ctx.beginPath();
+    ctx.moveTo(10, -14); ctx.lineTo(20, -14); ctx.lineTo(18, -6); ctx.lineTo(6, -6); ctx.closePath(); ctx.fill();
+    // legs
+    ctx.fillRect(-12, 2, 3, 16); ctx.fillRect(10, 2, 3, 16);
+    ctx.fillRect(-8, 4, 3, 14); ctx.fillRect(6, 4, 3, 14);
+    // antlers
+    ctx.strokeStyle = "#78350f"; ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(20, -20); ctx.lineTo(24, -28); ctx.lineTo(20, -32);
+    ctx.moveTo(24, -28); ctx.lineTo(28, -30);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(24, -18); ctx.lineTo(30, -24);
+    ctx.stroke();
+    // white tail
+    ctx.fillStyle = "#fff";
+    ctx.beginPath(); ctx.arc(-20, -10, 4, 0, Math.PI * 2); ctx.fill();
+    // eye
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(24, -14, 1, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function drawSquirrel(x, y, phase) {
+    ctx.save(); ctx.translate(x, y);
+    ctx.fillStyle = "#78350f";
+    ctx.beginPath(); ctx.ellipse(0, 0, 8, 6, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(7, -5, 5, 0, Math.PI * 2); ctx.fill();
+    // ears
+    ctx.beginPath(); ctx.arc(5, -10, 2, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(10, -9, 2, 0, Math.PI * 2); ctx.fill();
+    // bushy tail
+    ctx.fillStyle = "#451a03";
+    ctx.beginPath();
+    ctx.ellipse(-10, -5, 8, 12, 0.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#78350f"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.ellipse(-10, -5, 6, 10, 0.5, 0, Math.PI * 2); ctx.stroke();
+    // eye
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(9, -6, 0.8, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function drawOwl(x, y) {
+    ctx.save(); ctx.translate(x, y);
+    ctx.fillStyle = "#78350f";
+    ctx.beginPath(); ctx.ellipse(0, 0, 14, 18, 0, 0, Math.PI * 2); ctx.fill();
+    // face disc
+    ctx.fillStyle = "#d4a573";
+    ctx.beginPath(); ctx.ellipse(0, -5, 12, 10, 0, 0, Math.PI * 2); ctx.fill();
+    // eyes
+    ctx.fillStyle = "#fff";
+    ctx.beginPath(); ctx.arc(-5, -6, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(5, -6, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#fde047";
+    ctx.beginPath(); ctx.arc(-5, -6, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(5, -6, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(-5, -6, 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(5, -6, 1.5, 0, Math.PI * 2); ctx.fill();
+    // beak
+    ctx.fillStyle = "#f59e0b";
+    ctx.beginPath();
+    ctx.moveTo(0, -2); ctx.lineTo(-2, 2); ctx.lineTo(2, 2); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  function drawHeron(x, y) {
+    ctx.strokeStyle = "#e5e7eb"; ctx.fillStyle = "#f3f4f6"; ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x - 4, y); ctx.lineTo(x - 4, y + 40);
+    ctx.moveTo(x + 4, y); ctx.lineTo(x + 4, y + 40);
+    ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(x, y - 6, 15, 9, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x + 8, y - 10);
+    ctx.quadraticCurveTo(x + 22, y - 32, x + 20, y - 44);
+    ctx.lineWidth = 3; ctx.stroke();
+    ctx.fillStyle = "#f59e0b";
+    ctx.beginPath();
+    ctx.moveTo(x + 20, y - 44); ctx.lineTo(x + 32, y - 44); ctx.lineTo(x + 20, y - 42);
+    ctx.closePath(); ctx.fill();
+    // eye
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(x + 22, y - 42, 0.8, 0, Math.PI * 2); ctx.fill();
+  }
+  function drawCroc(x, y, phase) {
+    ctx.save(); ctx.translate(x, y);
+    ctx.fillStyle = "#365314";
+    // body
+    ctx.beginPath();
+    ctx.moveTo(-50, 0); ctx.lineTo(30, -4); ctx.lineTo(50, -1); ctx.lineTo(50, 2);
+    ctx.lineTo(30, 4); ctx.lineTo(-50, 0); ctx.fill();
+    // tail
+    ctx.beginPath();
+    ctx.moveTo(-50, 0); ctx.lineTo(-70, -3); ctx.lineTo(-60, 3); ctx.closePath(); ctx.fill();
+    // ridges
+    ctx.strokeStyle = "#1c2b10"; ctx.lineWidth = 1;
+    for (let i = -40; i < 20; i += 6) {
+      ctx.beginPath(); ctx.arc(i, -3, 1.5, 0, Math.PI * 2); ctx.fill();
+    }
+    // eyes
+    ctx.fillStyle = "#facc15";
+    ctx.beginPath(); ctx.arc(25, -5, 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(25, -5, 1, 0, Math.PI * 2); ctx.fill();
+    // teeth
+    ctx.fillStyle = "#fff";
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath();
+      ctx.moveTo(35 + i * 3, 1); ctx.lineTo(36 + i * 3, 3); ctx.lineTo(37 + i * 3, 1);
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function drawCrab(x, y, phase) {
+    ctx.save(); ctx.translate(x, y);
+    ctx.fillStyle = "#2563eb";
+    ctx.beginPath(); ctx.ellipse(0, 0, 10, 7, 0, 0, Math.PI * 2); ctx.fill();
+    // claws
+    ctx.beginPath(); ctx.ellipse(-12, -3, 5, 3, -0.3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(12, -3, 5, 3, 0.3, 0, Math.PI * 2); ctx.fill();
+    // legs
+    ctx.strokeStyle = "#1e40af"; ctx.lineWidth = 1.5;
+    for (let i = -1; i <= 1; i++) {
+      ctx.beginPath();
+      ctx.moveTo(i * 4 - 6, 5); ctx.lineTo(i * 4 - 10, 9); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(i * 4 + 6, 5); ctx.lineTo(i * 4 + 10, 9); ctx.stroke();
+    }
+    // eyes
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(-3, -5, 1.2, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(3, -5, 1.2, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function drawFlamingo(x, y) {
+    ctx.strokeStyle = "#f9a8d4"; ctx.fillStyle = "#f9a8d4"; ctx.lineWidth = 2.5;
+    // leg
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 4, y + 40); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x - 4, y); ctx.lineTo(x + 2, y + 18); ctx.lineTo(x - 2, y + 30); ctx.stroke();
+    // body
+    ctx.beginPath(); ctx.ellipse(x, y - 4, 16, 9, 0, 0, Math.PI * 2); ctx.fill();
+    // neck (S-curve)
+    ctx.strokeStyle = "#f9a8d4"; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x + 10, y - 8);
+    ctx.quadraticCurveTo(x + 28, y - 16, x + 20, y - 32);
+    ctx.quadraticCurveTo(x + 12, y - 42, x + 24, y - 46);
+    ctx.stroke();
+    // head
+    ctx.fillStyle = "#f9a8d4";
+    ctx.beginPath(); ctx.arc(x + 24, y - 48, 4, 0, Math.PI * 2); ctx.fill();
+    // beak
+    ctx.fillStyle = "#000";
+    ctx.beginPath();
+    ctx.moveTo(x + 26, y - 46); ctx.lineTo(x + 34, y - 43); ctx.lineTo(x + 26, y - 44);
+    ctx.closePath(); ctx.fill();
+    // eye
+    ctx.fillStyle = "#fff";
+    ctx.beginPath(); ctx.arc(x + 24, y - 49, 0.8, 0, Math.PI * 2); ctx.fill();
+  }
+  function drawMonkey(x, y) {
+    ctx.save(); ctx.translate(x, y);
+    ctx.fillStyle = "#78350f";
+    // arm hanging
+    ctx.strokeStyle = "#78350f"; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(0, -40); ctx.lineTo(0, 0); ctx.stroke();
+    // body
+    ctx.beginPath(); ctx.arc(0, 5, 8, 0, Math.PI * 2); ctx.fill();
+    // head
+    ctx.beginPath(); ctx.arc(0, -6, 7, 0, Math.PI * 2); ctx.fill();
+    // face
+    ctx.fillStyle = "#d4a573";
+    ctx.beginPath(); ctx.arc(0, -4, 4, 0, Math.PI * 2); ctx.fill();
+    // eyes
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(-2, -5, 0.8, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(2, -5, 0.8, 0, Math.PI * 2); ctx.fill();
+    // tail curling
+    ctx.strokeStyle = "#78350f"; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, 10); ctx.quadraticCurveTo(15, 15, 10, 0); ctx.stroke();
+    ctx.restore();
+  }
+  function drawJaguar(x, y, faceRight, phase) {
+    ctx.save(); ctx.translate(x, y); if (!faceRight) ctx.scale(-1, 1);
+    ctx.fillStyle = "#ca8a04";
+    // body
+    ctx.beginPath(); ctx.ellipse(0, 0, 30, 10, 0, 0, Math.PI * 2); ctx.fill();
+    // head
+    ctx.beginPath(); ctx.arc(28, -5, 9, 0, Math.PI * 2); ctx.fill();
+    // ears
+    ctx.beginPath();
+    ctx.moveTo(22, -12); ctx.lineTo(24, -18); ctx.lineTo(28, -13); ctx.closePath(); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(31, -12); ctx.lineTo(33, -17); ctx.lineTo(36, -11); ctx.closePath(); ctx.fill();
+    // legs
+    const step = Math.sin(phase * 3) * 2;
+    ctx.fillRect(-18, 8, 4, 10 + step);
+    ctx.fillRect(-8, 8, 4, 10 - step);
+    ctx.fillRect(12, 8, 4, 10 + step);
+    ctx.fillRect(22, 8, 4, 10 - step);
+    // tail
+    ctx.strokeStyle = "#ca8a04"; ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(-28, -2); ctx.quadraticCurveTo(-42, -8, -40, 8); ctx.stroke();
+    // spots
+    ctx.fillStyle = "#422006";
+    [[-10,-2],[0,-2],[10,-2],[-16,4],[-6,4],[6,4],[16,4],[25,-7]].forEach(([sx, sy]) => {
+      ctx.beginPath();
+      ctx.arc(sx, sy, 1.5, 0, Math.PI * 2); ctx.fill();
+    });
+    // eyes
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(31, -6, 1, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function drawFrog(x, y) {
+    ctx.fillStyle = "#16a34a";
+    ctx.beginPath(); ctx.ellipse(x, y, 10, 7, 0, 0, Math.PI * 2); ctx.fill();
+    // eyes bulge
+    ctx.fillStyle = "#fff";
+    ctx.beginPath(); ctx.arc(x - 4, y - 6, 3.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x + 4, y - 6, 3.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#ef4444";
+    ctx.beginPath(); ctx.arc(x - 4, y - 6, 2, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x + 4, y - 6, 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(x - 4, y - 6, 0.8, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x + 4, y - 6, 0.8, 0, Math.PI * 2); ctx.fill();
+    // legs
+    ctx.fillStyle = "#16a34a";
+    ctx.beginPath(); ctx.ellipse(x - 8, y + 4, 3, 2, 0.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x + 8, y + 4, 3, 2, -0.5, 0, Math.PI * 2); ctx.fill();
+  }
+
+  /* ---------- particles drawing ---------- */
+  function updateParticles(t) {
+    particles.forEach(p => {
+      if (p.type === "rain") {
+        p.y += p.vy; p.x += p.vx;
+        if (p.y > h) { p.y = -10; p.x = rand(0, w); }
+      } else if (p.type === "snow") {
+        p.y += p.vy; p.x += p.vx;
+        if (p.y > h) { p.y = -5; p.x = rand(0, w); }
+      } else if (p.type === "dust") {
+        p.x += p.vx;
+        if (p.x > w) p.x = -10;
+      } else if (p.type === "bubble") {
+        p.y += p.vy; p.x += Math.sin(p.y * 0.05) * 0.4;
+        if (p.y < -10) { p.y = h + 10; p.x = rand(0, w); }
+      } else if (p.type === "pollen") {
+        p.x += p.vx; p.y += p.vy;
+        p.phase += 0.02;
+        p.vx = Math.sin(p.phase) * 0.4;
+        if (p.y > h) p.y = 0;
+        if (p.y < 0) p.y = h;
+      } else if (p.type === "shine") {
+        p.phase += 0.03;
+      } else if (p.type === "leaf") {
+        p.x += p.vx + (state.weather === "wind" ? 2 : 0);
+        p.y += p.vy; p.rot += p.vr;
+        if (p.y > h || p.x > w + 20) { p.y = -10; p.x = rand(0, w); }
+      } else if (p.type === "flash") {
+        p.life--;
+      }
+    });
+    // Clean up dead
+    particles = particles.filter(p => p.type !== "flash" || p.life > 0);
+    // Cap size for perf
+    if (particles.length > 300) particles.splice(0, particles.length - 300);
+  }
+  function drawParticles(t) {
+    particles.forEach(p => {
+      if (p.type === "rain") {
+        ctx.strokeStyle = `rgba(180,220,255,${p.alpha})`; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x + p.vx * 2, p.y + p.len); ctx.stroke();
+      } else if (p.type === "snow") {
+        ctx.fillStyle = `rgba(255,255,255,${p.alpha})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+      } else if (p.type === "dust") {
+        ctx.fillStyle = `rgba(253,230,138,${p.alpha})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+      } else if (p.type === "bubble") {
+        ctx.strokeStyle = `rgba(255,255,255,${p.alpha})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.stroke();
+      } else if (p.type === "pollen") {
+        ctx.fillStyle = `rgba(253, 224, 71, ${p.alpha})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+      } else if (p.type === "shine") {
+        ctx.strokeStyle = `rgba(253, 224, 71, ${p.alpha * (0.5 + Math.sin(p.phase) * 0.5)})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x + p.len, p.y); ctx.stroke();
+      } else if (p.type === "leaf") {
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, p.size, p.size * 0.4, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      } else if (p.type === "flash") {
+        ctx.fillStyle = `rgba(255,255,255,${p.life / 6})`;
+        ctx.fillRect(0, 0, w, h);
+      }
+    });
+  }
+
+  /* ---------- pollution + pops ---------- */
+  function drawPollution(t) {
+    pollution.forEach(p => {
+      p.bob += 0.05;
+      const by = p.y + Math.sin(p.bob) * 3;
+      ctx.save();
+      ctx.font = "22px serif";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      // glow
+      ctx.shadowColor = "rgba(239, 68, 68, 0.6)";
+      ctx.shadowBlur = 10;
+      ctx.fillText(p.em, p.x, by);
+      ctx.restore();
+    });
+  }
+  function drawPops() {
+    pops.forEach(p => {
+      p.life--;
+      p.y -= 1.5;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.life / 40);
+      ctx.font = (p.size || 18) + "px serif";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(p.em, p.x, p.y);
+      ctx.restore();
+    });
+    pops = pops.filter(p => p.life > 0);
+  }
+
+  /* ---------- impact/damage overlay ---------- */
+  function applyImpactOverlay() {
+    if (impact <= 0) return;
+    ctx.fillStyle = `rgba(0,0,0,${impact * 0.32})`;
+    ctx.fillRect(0, 0, w, h);
+    if (impact > 0.6) {
+      ctx.fillStyle = `rgba(80,60,40,${(impact - 0.6) * 1.5})`;
+      for (let i = 0; i < 4; i++) {
+        const x = (i * w / 3) + 40 + Math.sin(performance.now() * 0.0005 + i) * 20;
+        ctx.beginPath();
+        ctx.ellipse(x, h * 0.3, 120, 50, 0, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+  }
+
+  function loop() {
+    const now = performance.now();
+    const t = now - t0;
+    ctx.clearRect(0, 0, w, h);
+    drawBackground();
+    drawGround(t);
+    applyWeather();
+    updateParticles(t);
+    updateDrawCreatures(t);
+    drawParticles(t);
+    drawPollution(t);
+    drawPops();
+    applyImpactOverlay();
+    // Rescue mode overlay
+    if (state.rescueMode) {
+      ctx.fillStyle = "rgba(249, 115, 22, 0.08)";
+      ctx.fillRect(0, 0, w, h);
+    }
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  return { load, setImpact, startRescue };
+})();
+
+/* ==================================================================
+   FOOD CHAIN visualization
+   ================================================================== */
+function renderFoodChain() {
+  const row = $("#chainRow");
+  row.innerHTML = "";
+  state.currentEco.foodChain.forEach((n, i, arr) => {
+    const node = el("div", "chain-node");
+    node.innerHTML = `<span class="em">${n.em}</span>
+                      <div class="lbl">${n.lbl}</div>
+                      <div class="role">${n.role}</div>`;
+    row.appendChild(node);
+    if (i < arr.length - 1) {
+      const arrow = el("div", "chain-arrow", "→");
+      row.appendChild(arrow);
+    }
+  });
+}
+
+/* ==================================================================
+   DRAG-AND-DROP GAME
+   ================================================================== */
+const poolEl = $("#poolTokens");
+const bioticEl = $("#bioticTokens");
+const abioticEl = $("#abioticTokens");
+
+function resetGameForEco(eco) {
+  poolEl.innerHTML = ""; bioticEl.innerHTML = ""; abioticEl.innerHTML = "";
+  state.score = { correct: 0, wrong: 0, streak: 0, best: state.score.best };
+  updateScore();
+
+  const items = shuffle([
+    ...eco.biotic.map(v => ({ em: v.em, value: v.name, kind: "biotic" })),
+    ...eco.abiotic.map(v => ({ em: v.em, value: v.name, kind: "abiotic" }))
+  ]).slice(0, 10);
+
+  items.forEach(it => {
+    const token = el("div", "token");
+    token.innerHTML = `<span>${it.em}</span><span>${it.value}</span>`;
+    token.draggable = true;
+    token.dataset.kind = it.kind;
+    token.dataset.value = it.value;
+    token.id = "tok-" + Math.random().toString(36).slice(2, 8);
+    token.addEventListener("dragstart", e => {
+      e.dataTransfer.setData("text/plain", token.id);
+      token.style.opacity = 0.5;
+    });
+    token.addEventListener("dragend", () => token.style.opacity = 1);
+    // Touch support: tap token then tap bucket
+    token.addEventListener("click", () => {
+      if (token._selected) {
+        token._selected = false;
+        token.style.outline = "";
+      } else {
+        $$(".token").forEach(tk => { tk._selected = false; tk.style.outline = ""; });
+        token._selected = true;
+        token.style.outline = "2px solid var(--c-accent)";
+      }
+    });
+    poolEl.appendChild(token);
+  });
+}
+
+$$(".bucket").forEach(b => {
+  b.addEventListener("dragover", e => { e.preventDefault(); b.classList.add("over"); });
+  b.addEventListener("dragleave", () => b.classList.remove("over"));
+  b.addEventListener("drop", e => {
+    e.preventDefault(); b.classList.remove("over");
+    const id = e.dataTransfer.getData("text/plain");
+    const tok = document.getElementById(id);
+    if (!tok) return;
+    const holder = b.querySelector(".tokens") || b;
+    holder.appendChild(tok);
+    tok.classList.remove("placed","correct","wrong");
+  });
+  // Tap-to-place
+  b.addEventListener("click", e => {
+    if (e.target.closest(".token")) return;
+    const selected = $$(".token").find(tk => tk._selected);
+    if (!selected) return;
+    const holder = b.querySelector(".tokens") || b;
+    holder.appendChild(selected);
+    selected._selected = false;
+    selected.style.outline = "";
+    selected.classList.remove("placed","correct","wrong");
+  });
+});
+
+$("#btnCheck").addEventListener("click", () => {
+  let correct = 0, wrong = 0, streak = 0, bestStreak = 0;
+  const allPlaced = [...$$("#bioticTokens .token"), ...$$("#abioticTokens .token")];
+  allPlaced.forEach(t => {
+    const parentKind = t.parentElement.parentElement.dataset.kind;
+    const ok = t.dataset.kind === parentKind;
+    t.classList.add("placed", ok ? "correct" : "wrong");
+    if (ok) { correct++; streak++; bestStreak = Math.max(bestStreak, streak); }
+    else { wrong++; streak = 0; }
+  });
+  state.score = { correct, wrong, streak: bestStreak, best: Math.max(state.score.best, bestStreak) };
+  updateScore();
+  if (bestStreak >= 5) unlock("classifier");
+  if (bestStreak >= 10) unlock("streak_10");
+  if (correct >= 6 && wrong === 0) { fireConfetti(); playCorrect(); }
+  else if (wrong > 0) playWrong();
+});
+$("#btnReset").addEventListener("click", () => { resetGameForEco(state.currentEco); playClick(); });
+$("#btnNewSet").addEventListener("click", () => {
+  const idx = ECOSYSTEMS.findIndex(e => e.id === state.currentEco.id);
+  selectEcosystem(ECOSYSTEMS[(idx + 1) % ECOSYSTEMS.length].id);
+  playClick();
+});
+
+function updateScore() {
+  $("#scoreCorrect").textContent = `✅ Correctas: ${state.score.correct}`;
+  $("#scoreWrong").textContent   = `❌ Errores: ${state.score.wrong}`;
+  $("#scoreStreak").textContent  = `🔥 Mejor racha: ${state.score.best}`;
+}
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ==================================================================
+   QUIZ
+   ================================================================== */
+const QUIZ = [
+  { q: "El jaguar (Panthera onca) es un ejemplo de factor:",
+    options: [
+      { t: "Abiótico", ok: false },
+      { t: "Biótico", ok: true },
+      { t: "Climático", ok: false },
+      { t: "Mineral", ok: false } ] },
+  { q: "¿Qué hace único al saguaro del Desierto de Sonora?",
+    options: [
+      { t: "Vive solo 10 años", ok: false },
+      { t: "Crece 1cm al año y vive 200 años", ok: true },
+      { t: "Florece todo el año", ok: false },
+      { t: "Es una palmera", ok: false } ] },
+  { q: "El mangle rojo (Rhizophora mangle) ayuda a:",
+    options: [
+      { t: "Proteger la costa y dar refugio a peces bebé", ok: true },
+      { t: "Producir solo madera", ok: false },
+      { t: "Causar erosión", ok: false },
+      { t: "Contaminar el agua", ok: false } ] },
+  { q: "¿Cuánto vuela la mariposa monarca para llegar a México?",
+    options: [
+      { t: "100 km", ok: false },
+      { t: "500 km", ok: false },
+      { t: "Hasta 4,500 km", ok: true },
+      { t: "No migra", ok: false } ] },
+  { q: "El blanqueamiento del coral es causado principalmente por:",
+    options: [
+      { t: "Demasiados peces", ok: false },
+      { t: "Aumento de temperatura del mar", ok: true },
+      { t: "Exceso de oxígeno", ok: false },
+      { t: "Muy poca luz solar", ok: false } ] },
+  { q: "¿Cuál NO es una acción para preservar ecosistemas?",
+    options: [
+      { t: "Reforestar áreas degradadas", ok: false },
+      { t: "Reducir el uso de plásticos", ok: false },
+      { t: "Tirar basura en ríos y playas", ok: true },
+      { t: "Consumir productos locales", ok: false } ] },
+  { q: "Como seres humanos, nuestro papel debe ser:",
+    options: [
+      { t: "Explotar sin medida", ok: false },
+      { t: "Ignorar los ecosistemas", ok: false },
+      { t: "Proteger, conservar y restaurar", ok: true },
+      { t: "Reemplazar todo con ciudades", ok: false } ] }
+];
+
+const quizContainer = $("#quizContainer");
+QUIZ.forEach((q, qi) => {
+  const wrap = el("div", "question");
+  wrap.innerHTML = `<p class="q">${qi + 1}. ${q.q}</p>`;
+  const opts = el("div", "options");
+  q.options.forEach((o, oi) => {
+    const b = el("div", "option", o.t);
+    b.addEventListener("click", () => {
+      if (b.classList.contains("answered")) return;
+      opts.querySelectorAll(".option").forEach(x => x.classList.add("answered"));
+      if (o.ok) { b.classList.add("correct"); playCorrect(); }
+      else {
+        b.classList.add("wrong"); playWrong();
+        q.options.forEach((oo, oii) => { if (oo.ok) opts.children[oii].classList.add("correct"); });
+      }
+      checkQuizComplete();
+    });
+    opts.appendChild(b);
+  });
+  wrap.appendChild(opts);
+  quizContainer.appendChild(wrap);
+});
+
+function checkQuizComplete() {
+  const questionsAnswered = [...document.querySelectorAll("#quizContainer .question")]
+    .filter(q => q.querySelector(".option.answered")).length;
+  if (questionsAnswered === QUIZ.length) {
+    const correct = $$("#quizContainer .option.correct.answered").length;
+    const result = $("#quizResult");
+    result.style.display = "block";
+    let msg;
+    if (correct === QUIZ.length) {
+      msg = `🏆 ¡PERFECTO! ${correct}/${QUIZ.length}. Eres un gran guardián de los ecosistemas.`;
+      unlock("quiz_perfect");
+      fireConfetti();
+    } else if (correct >= 5) {
+      msg = `🌟 ¡Muy bien! ${correct}/${QUIZ.length}. Sigues aprendiendo para proteger la naturaleza.`;
+    } else {
+      msg = `🌱 ${correct}/${QUIZ.length}. Sigue practicando: cada ecosistema necesita de ti.`;
+    }
+    result.textContent = msg;
+  }
+}
+
+/* ==================================================================
+   CONFETTI
+   ================================================================== */
+const confettiCanvas = $("#confetti");
+const cctx = confettiCanvas.getContext("2d");
+let cparts = [];
+function sizeConfetti() {
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+}
+window.addEventListener("resize", sizeConfetti);
+sizeConfetti();
+
+function fireConfetti() {
+  const emojis = ["🌱","🌿","🦋","✨","💚","🌸","🍃"];
+  for (let i = 0; i < 160; i++) {
+    cparts.push({
+      x: window.innerWidth / 2 + rand(-100, 100),
+      y: window.innerHeight / 2,
+      vx: rand(-8, 8),
+      vy: rand(-12, -3),
+      g: rand(0.2, 0.35),
+      r: rand(3, 8),
+      em: Math.random() < 0.3 ? pick(emojis) : null,
+      c: `hsl(${Math.random() * 360}, 90%, 60%)`,
+      life: rand(120, 200),
+      rot: Math.random() * Math.PI * 2,
+      vr: rand(-0.2, 0.2)
+    });
+  }
+  if (!fireConfetti._r) animateConfetti();
+}
+function animateConfetti() {
+  fireConfetti._r = true;
+  cctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+  cparts.forEach(p => {
+    p.vy += p.g; p.x += p.vx; p.y += p.vy;
+    p.rot += p.vr; p.life -= 1;
+    cctx.save(); cctx.translate(p.x, p.y); cctx.rotate(p.rot);
+    if (p.em) {
+      cctx.font = (p.r * 3) + "px serif";
+      cctx.textAlign = "center"; cctx.textBaseline = "middle";
+      cctx.fillText(p.em, 0, 0);
+    } else {
+      cctx.fillStyle = p.c;
+      cctx.fillRect(-p.r, -p.r, p.r * 2, p.r);
+    }
+    cctx.restore();
+  });
+  cparts = cparts.filter(p => p.life > 0 && p.y < confettiCanvas.height + 30);
+  if (cparts.length > 0) requestAnimationFrame(animateConfetti);
+  else fireConfetti._r = false;
+}
+
+/* ==================================================================
+   REVEAL ON SCROLL
+   ================================================================== */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+  });
+}, { threshold: 0.12 });
+$$(".reveal").forEach(n => io.observe(n));
+
+/* Close species card on scene click outside */
+$("#scene").addEventListener("click", (e) => {
+  if (!e.target.closest(".hotspot") && !e.target.closest(".species-card") && !e.target.closest(".sc-btn") && !e.target.closest(".weather-bar")) {
+    // Keep card open unless clicking background - but still allow interaction
+  }
+});
+
+/* ==================================================================
+   INIT
+   ================================================================== */
+renderBadges();
+selectEcosystem(ECOSYSTEMS[0].id);
+</script>
+</body>
+</html>
